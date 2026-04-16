@@ -1,0 +1,942 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduValidate - AI-Powered Assessment Validation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#0066CC',
+                        secondary: '#00A3CC',
+                        success: '#00C896',
+                        warning: '#FF8C42',
+                        background: '#FAFBFC',
+                        textPrimary: '#2D3748',
+                        textMuted: '#718096',
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .file-upload-area {
+            border: 2px dashed #CBD5E0;
+            transition: all 0.3s ease;
+        }
+        .file-upload-area.dragover {
+            border-color: #0066CC;
+            background-color: #EBF8FF;
+        }
+        .pdf-viewer {
+            border: 1px solid #E2E8F0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-background text-textPrimary">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-primary">EduValidate</h1>
+                    </div>
+                </div>
+                <div id="nav-menu" class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <button onclick="showPage('landing')" class="nav-link text-textMuted hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</button>
+                        <button onclick="showPage('features')" class="nav-link text-textMuted hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">Features</button>
+                        <button onclick="showPage('pricing')" class="nav-link text-textMuted hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">Pricing</button>
+                        <button onclick="showPage('login')" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">Login</button>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-textMuted hover:text-primary">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-100">
+                <button onclick="showPage('landing')" class="block text-textMuted hover:text-primary px-3 py-2 rounded-md text-base font-medium transition-colors">Home</button>
+                <button onclick="showPage('features')" class="block text-textMuted hover:text-primary px-3 py-2 rounded-md text-base font-medium transition-colors">Features</button>
+                <button onclick="showPage('pricing')" class="block text-textMuted hover:text-primary px-3 py-2 rounded-md text-base font-medium transition-colors">Pricing</button>
+                <button onclick="showPage('login')" class="block bg-primary text-white px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700 transition-colors">Login</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Landing Page -->
+    <div id="landing-page" class="page active">
+        <!-- Hero Section -->
+        <section class="relative overflow-hidden">
+            <!-- Modern geometric background pattern -->
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 opacity-50"></div>
+            <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><defs><pattern id=%22grid%22 width=%2210%22 height=%2210%22 patternUnits=%22userSpaceOnUse%22><path d=%22M 10 0 L 0 0 0 10%22 fill=%22none%22 stroke=%22%23E2E8F0%22 stroke-width=%220.5%22/></pattern></defs><rect width=%22100%22 height=%22100%22 fill=%22url(%23grid)%22/></svg>'); opacity: 0.3;"></div>
+            
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+                <div class="text-center">
+                    <h1 class="text-4xl md:text-6xl font-bold text-textPrimary mb-6 leading-tight">
+                        AI-Powered Assessment <br>
+                        <span class="text-primary">Validation</span> Platform
+                    </h1>
+                    <p class="text-xl text-textMuted mb-8 max-w-3xl mx-auto leading-relaxed">
+                        Validate your assessment tools against Australian training.gov.au competency requirements with precision and confidence. 
+                        Get comprehensive reports with improvement suggestions in minutes.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button onclick="showPage('login')" class="bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-all transform hover:scale-105 shadow-lg">
+                            Start Validating Now
+                        </button>
+                        <button onclick="scrollToFeatures()" class="border-2 border-primary text-primary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary hover:text-white transition-all">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features-section" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-textPrimary mb-4">
+                        How EduValidate Works
+                    </h2>
+                    <p class="text-xl text-textMuted max-w-2xl mx-auto">
+                        Our AI-powered platform streamlines the assessment validation process with intelligent analysis and comprehensive reporting.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Step 1 -->
+                    <div class="card-hover bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                        <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-6">
+                            <i class="fas fa-upload text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-textPrimary mb-4">Upload Assessment Tools</h3>
+                        <p class="text-textMuted leading-relaxed">
+                            Upload your assessment documents in multiple formats. Our system supports various document types and styles for comprehensive analysis.
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="card-hover bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                        <div class="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center mb-6">
+                            <i class="fas fa-cogs text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-textPrimary mb-4">AI Analysis</h3>
+                        <p class="text-textMuted leading-relaxed">
+                            Our AI engine checks your tools against training.gov.au competency requirements and auditing criteria with precision mapping.
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="card-hover bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                        <div class="w-12 h-12 bg-success rounded-lg flex items-center justify-center mb-6">
+                            <i class="fas fa-file-alt text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-textPrimary mb-4">Validation Report</h3>
+                        <p class="text-textMuted leading-relaxed">
+                            Receive detailed reports showing requirements met, areas for improvement, and actionable suggestions for enhancement.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Benefits Section -->
+        <section class="py-20 bg-background">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-bold text-textPrimary mb-6">
+                            Why Choose EduValidate?
+                        </h2>
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1">
+                                    <i class="fas fa-check text-white text-sm"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-textPrimary mb-2">Compliance Assurance</h3>
+                                    <p class="text-textMuted">Ensure your assessments meet Australian training standards and competency requirements.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1">
+                                    <i class="fas fa-check text-white text-sm"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-textPrimary mb-2">Time Efficiency</h3>
+                                    <p class="text-textMuted">Reduce validation time from weeks to minutes with AI-powered analysis.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center mt-1">
+                                    <i class="fas fa-check text-white text-sm"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-textPrimary mb-2">Detailed Insights</h3>
+                                    <p class="text-textMuted">Get comprehensive feedback with specific improvement recommendations.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:pl-8">
+                        <!-- Modern dashboard preview illustration -->
+                        <div class="bg-white rounded-xl shadow-xl p-6 border border-gray-100">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="text-sm font-medium text-textMuted">Validation Report Preview</div>
+                                <div class="flex space-x-1">
+                                    <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                                    <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                                    <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="h-4 bg-success rounded w-3/4"></div>
+                                <div class="h-3 bg-gray-200 rounded w-full"></div>
+                                <div class="h-3 bg-gray-200 rounded w-5/6"></div>
+                                <div class="flex space-x-4 mt-4">
+                                    <div class="flex-1">
+                                        <div class="text-xs text-textMuted mb-1">Requirements Met</div>
+                                        <div class="h-2 bg-success rounded w-4/5"></div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="text-xs text-textMuted mb-1">Improvements</div>
+                                        <div class="h-2 bg-warning rounded w-2/5"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-20 bg-primary text-white">
+            <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                    Ready to Transform Your Assessment Validation?
+                </h2>
+                <p class="text-xl opacity-90 mb-8">
+                    Join thousands of educators and training providers who trust EduValidate for their assessment needs.
+                </p>
+                <button onclick="showPage('login')" class="bg-white text-primary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg">
+                    Get Started Today
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Login/Signup Page -->
+    <div id="login-page" class="page">
+        <div class="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full space-y-8">
+                <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-bold text-textPrimary mb-2">Welcome to EduValidate</h2>
+                        <p class="text-textMuted">Sign in to your account or create a new one</p>
+                    </div>
+
+                    <div class="mt-8">
+                        <!-- Tab Navigation -->
+                        <div class="flex rounded-lg bg-gray-100 p-1 mb-6">
+                            <button onclick="showLoginTab()" id="login-tab" class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all bg-white text-primary shadow-sm">
+                                Sign In
+                            </button>
+                            <button onclick="showSignupTab()" id="signup-tab" class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all text-textMuted hover:text-primary">
+                                Sign Up
+                            </button>
+                        </div>
+
+                        <!-- Login Form -->
+                        <form id="login-form" class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-textPrimary mb-2">Email Address</label>
+                                <input type="email" value="demo@eduvalidate.com" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" placeholder="Enter your email">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-textPrimary mb-2">Password</label>
+                                <input type="password" value="demo123" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" placeholder="Enter your password">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="ml-2 text-sm text-textMuted">Remember me</span>
+                                </label>
+                                <a href="#" class="text-sm text-primary hover:text-blue-700">Forgot password?</a>
+                            </div>
+                            <button type="submit" onclick="handleLogin(event)" class="w-full bg-primary text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-all transform hover:scale-[1.02]">
+                                Sign In
+                            </button>
+                        </form>
+
+                        <!-- Signup Form -->
+                        <form id="signup-form" class="space-y-6 hidden">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-textPrimary mb-2">First Name</label>
+                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" placeholder="John">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-textPrimary mb-2">Last Name</label>
+                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" placeholder="Doe">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-textPrimary mb-2">Email Address</label>
+                                <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" placeholder="john@example.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-textPrimary mb-2">Password</label>
+                                <input type="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" placeholder="Create a strong password">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-textPrimary mb-2">Organization</label>
+                                <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" placeholder="Your organization name">
+                            </div>
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary" required>
+                                    <span class="ml-2 text-sm text-textMuted">I agree to the <a href="#" class="text-primary hover:text-blue-700">Terms of Service</a> and <a href="#" class="text-primary hover:text-blue-700">Privacy Policy</a></span>
+                                </label>
+                            </div>
+                            <button type="submit" onclick="handleSignup(event)" class="w-full bg-primary text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-all transform hover:scale-[1.02]">
+                                Create Account
+                            </button>
+                        </form>
+
+                        <div class="mt-6 text-center">
+                            <p class="text-sm text-textMuted">
+                                Demo credentials: <strong>demo@eduvalidate.com</strong> / <strong>demo123</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Competency Document Selection Page -->
+    <div id="dashboard-page" class="page">
+        <div class="min-h-screen bg-background py-8">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Header -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-2xl font-bold text-textPrimary">Competency Document Validation</h1>
+                            <p class="text-textMuted mt-1">Select a competency unit and upload your assessment tool for validation</p>
+                        </div>
+                        <button onclick="showPage('login')" class="text-textMuted hover:text-primary transition-colors">
+                            <i class="fas fa-sign-out-alt text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Document Selection -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+                    <h2 class="text-xl font-semibold text-textPrimary mb-6">Select Competency Unit</h2>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-textPrimary mb-3">Choose Competency Document</label>
+                        <select id="competency-dropdown" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none bg-white">
+                            <option value="">Select a competency unit...</option>
+                            <option value="document1">BSBWHS311 - Assist with maintaining workplace safety</option>
+                            <option value="document2">BSBCMM401 - Make a presentation</option>
+                            <option value="document3">BSBLDR523 - Lead and manage effective workplace relationships</option>
+                        </select>
+                    </div>
+
+                    <!-- Upload Section -->
+                    <div id="upload-section" class="hidden">
+                        <h3 class="text-lg font-semibold text-textPrimary mb-4">Upload Assessment Tool</h3>
+                        <p class="text-sm text-textMuted mb-6">Upload your assessment documents for validation against the selected competency unit. Supported formats: PDF, DOC, DOCX, XLS, XLSX</p>
+                        
+                        <!-- File Upload Area -->
+                        <div id="file-upload-area" class="file-upload-area bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-100 transition-all">
+                            <div id="upload-content">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                                <p class="text-lg font-medium text-textPrimary mb-2">Drop files here or click to browse</p>
+                                <p class="text-sm text-textMuted">Maximum file size: 10MB</p>
+                            </div>
+                            <input type="file" id="file-input" class="hidden" multiple accept=".pdf,.doc,.docx,.xls,.xlsx">
+                        </div>
+
+                        <!-- Uploaded Files List -->
+                        <div id="uploaded-files" class="mt-6 hidden">
+                            <h4 class="text-sm font-medium text-textPrimary mb-3">Uploaded Files</h4>
+                            <div id="files-list" class="space-y-2"></div>
+                        </div>
+
+                        <!-- Generate Report Button -->
+                        <div class="mt-8 text-center">
+                            <button id="generate-report-btn" onclick="generateReport()" class="bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-700 transition-all transform hover:scale-[1.02] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fas fa-cogs mr-2"></i>
+                                Generate Validation Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Cards -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                                <i class="fas fa-shield-alt text-white"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-textPrimary ml-3">Secure Validation</h3>
+                        </div>
+                        <p class="text-textMuted text-sm">Your documents are processed securely and never stored permanently on our servers.</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-white"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-textPrimary ml-3">Quick Processing</h3>
+                        </div>
+                        <p class="text-textMuted text-sm">Get your validation report in under 2 minutes with detailed analysis and recommendations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validation Report Page -->
+    <div id="report-page" class="page">
+        <div class="min-h-screen bg-background py-8">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Header -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-2xl font-bold text-textPrimary">Validation Report</h1>
+                            <p class="text-textMuted mt-1">Competency Unit: BSBWHS311 - Assist with maintaining workplace safety</p>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="downloadReport()" class="bg-success text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition-all">
+                                <i class="fas fa-download mr-2"></i>
+                                Download Report
+                            </button>
+                            <button onclick="showPage('dashboard')" class="border border-gray-300 text-textPrimary px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-all">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                Back to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Report Summary -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <!-- Overall Score -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-lg font-semibold text-textPrimary mb-4">Validation Summary</h3>
+                            <div class="text-center">
+                                <div class="inline-flex items-center justify-center w-20 h-20 bg-success rounded-full mb-4">
+                                    <span class="text-2xl font-bold text-white">87%</span>
+                                </div>
+                                <p class="text-sm text-textMuted">Overall Compliance Score</p>
+                            </div>
+                        </div>
+
+                        <!-- Requirements Status -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-lg font-semibold text-textPrimary mb-4">Requirements Status</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-textMuted">Requirements Met</span>
+                                    <div class="flex items-center">
+                                        <span class="text-sm font-medium text-success mr-2">13/15</span>
+                                        <i class="fas fa-check-circle text-success"></i>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-textMuted">Needs Improvement</span>
+                                    <div class="flex items-center">
+                                        <span class="text-sm font-medium text-warning mr-2">2/15</span>
+                                        <i class="fas fa-exclamation-circle text-warning"></i>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-textMuted">Critical Issues</span>
+                                    <div class="flex items-center">
+                                        <span class="text-sm font-medium text-red-500 mr-2">0/15</span>
+                                        <i class="fas fa-times-circle text-red-500"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-lg font-semibold text-textPrimary mb-4">Quick Actions</h3>
+                            <div class="space-y-3">
+                                <button class="w-full text-left px-4 py-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all">
+                                    <i class="fas fa-eye text-textMuted mr-3"></i>
+                                    <span class="text-sm font-medium">View Detailed Analysis</span>
+                                </button>
+                                <button class="w-full text-left px-4 py-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all">
+                                    <i class="fas fa-lightbulb text-textMuted mr-3"></i>
+                                    <span class="text-sm font-medium">View Suggestions</span>
+                                </button>
+                                <button onclick="showPage('dashboard')" class="w-full text-left px-4 py-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all">
+                                    <i class="fas fa-plus text-textMuted mr-3"></i>
+                                    <span class="text-sm font-medium">Validate New Document</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PDF Viewer -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-semibold text-textPrimary">Detailed Validation Report</h3>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-sm text-textMuted">Generated: <span class="font-medium">Today, 2:34 PM</span></span>
+                                    <button onclick="toggleFullscreen()" class="text-textMuted hover:text-primary transition-colors">
+                                        <i class="fas fa-expand"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Mock PDF Viewer -->
+                            <div class="pdf-viewer bg-gray-100 h-96 lg:h-[600px] flex items-center justify-center">
+                                <div class="text-center">
+                                    <i class="fas fa-file-pdf text-6xl text-red-500 mb-4"></i>
+                                    <h4 class="text-lg font-semibold text-textPrimary mb-2">EduValidate Assessment Report</h4>
+                                    <p class="text-textMuted mb-4">Comprehensive validation analysis for BSBWHS311</p>
+                                    <div class="bg-white rounded-lg p-6 shadow-sm max-w-md mx-auto text-left">
+                                        <h5 class="font-semibold text-textPrimary mb-3">Report Contents:</h5>
+                                        <ul class="text-sm text-textMuted space-y-2">
+                                            <li class="flex items-center">
+                                                <i class="fas fa-check text-success mr-2"></i>
+                                                Executive Summary
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="fas fa-check text-success mr-2"></i>
+                                                Compliance Analysis
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="fas fa-check text-success mr-2"></i>
+                                                Gap Analysis
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="fas fa-check text-success mr-2"></i>
+                                                Improvement Recommendations
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="fas fa-check text-success mr-2"></i>
+                                                Implementation Roadmap
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <button onclick="downloadReport()" class="mt-6 bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-all">
+                                        <i class="fas fa-download mr-2"></i>
+                                        Download Full Report
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- PDF Controls -->
+                            <div class="flex items-center justify-between mt-4 p-4 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-4">
+                                    <button class="text-textMuted hover:text-primary transition-colors">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <span class="text-sm text-textMuted">Page 1 of 12</span>
+                                    <button class="text-textMuted hover:text-primary transition-colors">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <button class="text-textMuted hover:text-primary transition-colors">
+                                        <i class="fas fa-search-minus"></i>
+                                    </button>
+                                    <span class="text-sm text-textMuted">100%</span>
+                                    <button class="text-textMuted hover:text-primary transition-colors">
+                                        <i class="fas fa-search-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state management
+        let currentPage = 'landing';
+        let uploadedFiles = [];
+        let selectedCompetency = '';
+
+        // Page navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            const targetPage = document.getElementById(pageId + '-page');
+            if (targetPage) {
+                targetPage.classList.add('active');
+                targetPage.classList.add('slide-in');
+                currentPage = pageId;
+                
+                // Remove animation class after animation completes
+                setTimeout(() => {
+                    targetPage.classList.remove('slide-in');
+                }, 300);
+            }
+
+            // Update navigation state
+            updateNavigation();
+        }
+
+        function updateNavigation() {
+            const navMenu = document.getElementById('nav-menu');
+            if (currentPage === 'dashboard' || currentPage === 'report') {
+                navMenu.classList.add('hidden');
+            } else {
+                navMenu.classList.remove('hidden');
+            }
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // Scroll to features section
+        function scrollToFeatures() {
+            document.getElementById('features-section').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+
+        // Login/Signup tab switching
+        function showLoginTab() {
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+            
+            document.getElementById('login-tab').classList.add('bg-white', 'text-primary', 'shadow-sm');
+            document.getElementById('login-tab').classList.remove('text-textMuted');
+            
+            document.getElementById('signup-tab').classList.remove('bg-white', 'text-primary', 'shadow-sm');
+            document.getElementById('signup-tab').classList.add('text-textMuted');
+        }
+
+        function showSignupTab() {
+            document.getElementById('signup-form').classList.remove('hidden');
+            document.getElementById('login-form').classList.add('hidden');
+            
+            document.getElementById('signup-tab').classList.add('bg-white', 'text-primary', 'shadow-sm');
+            document.getElementById('signup-tab').classList.remove('text-textMuted');
+            
+            document.getElementById('login-tab').classList.remove('bg-white', 'text-primary', 'shadow-sm');
+            document.getElementById('login-tab').classList.add('text-textMuted');
+        }
+
+        // Authentication handlers
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            // TODO: Implement actual authentication logic
+            // For demo purposes, always succeed
+            setTimeout(() => {
+                showPage('dashboard');
+            }, 500);
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            
+            // TODO: Implement actual signup logic
+            // For demo purposes, always succeed
+            setTimeout(() => {
+                showPage('dashboard');
+            }, 500);
+        }
+
+        // Competency dropdown handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdown = document.getElementById('competency-dropdown');
+            const uploadSection = document.getElementById('upload-section');
+            
+            if (dropdown) {
+                dropdown.addEventListener('change', function() {
+                    selectedCompetency = this.value;
+                    if (selectedCompetency) {
+                        uploadSection.classList.remove('hidden');
+                    } else {
+                        uploadSection.classList.add('hidden');
+                    }
+                    updateGenerateButton();
+                });
+            }
+
+            // File upload functionality
+            setupFileUpload();
+        });
+
+        function setupFileUpload() {
+            const fileUploadArea = document.getElementById('file-upload-area');
+            const fileInput = document.getElementById('file-input');
+            const uploadedFilesDiv = document.getElementById('uploaded-files');
+            const filesList = document.getElementById('files-list');
+
+            if (!fileUploadArea || !fileInput) return;
+
+            // Click to browse
+            fileUploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // Drag and drop
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.add('dragover');
+            });
+
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.classList.remove('dragover');
+            });
+
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+                const files = Array.from(e.dataTransfer.files);
+                handleFiles(files);
+            });
+
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                handleFiles(files);
+            });
+
+            function handleFiles(files) {
+                files.forEach(file => {
+                    if (validateFile(file)) {
+                        uploadedFiles.push(file);
+                        displayFile(file);
+                    }
+                });
+                
+                if (uploadedFiles.length > 0) {
+                    uploadedFilesDiv.classList.remove('hidden');
+                }
+                
+                updateGenerateButton();
+            }
+
+            function validateFile(file) {
+                const allowedTypes = [
+                    'application/pdf',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/vnd.ms-excel',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                ];
+                
+                const maxSize = 10 * 1024 * 1024; // 10MB
+                
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Please upload only PDF, DOC, DOCX, XLS, or XLSX files.');
+                    return false;
+                }
+                
+                if (file.size > maxSize) {
+                    alert('File size must be less than 10MB.');
+                    return false;
+                }
+                
+                return true;
+            }
+
+            function displayFile(file) {
+                const fileElement = document.createElement('div');
+                fileElement.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200';
+                
+                const fileIcon = getFileIcon(file.type);
+                const fileSize = formatFileSize(file.size);
+                
+                fileElement.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="${fileIcon} text-primary mr-3"></i>
+                        <div>
+                            <p class="text-sm font-medium text-textPrimary">${file.name}</p>
+                            <p class="text-xs text-textMuted">${fileSize}</p>
+                        </div>
+                    </div>
+                    <button onclick="removeFile('${file.name}')" class="text-red-500 hover:text-red-700 transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                filesList.appendChild(fileElement);
+            }
+
+            function getFileIcon(fileType) {
+                if (fileType.includes('pdf')) return 'fas fa-file-pdf';
+                if (fileType.includes('word')) return 'fas fa-file-word';
+                if (fileType.includes('excel') || fileType.includes('spreadsheet')) return 'fas fa-file-excel';
+                return 'fas fa-file';
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+        }
+
+        function removeFile(fileName) {
+            uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+            
+            // Remove from display
+            const filesList = document.getElementById('files-list');
+            const fileElements = filesList.children;
+            
+            for (let i = 0; i < fileElements.length; i++) {
+                if (fileElements[i].querySelector('p').textContent === fileName) {
+                    fileElements[i].remove();
+                    break;
+                }
+            }
+            
+            if (uploadedFiles.length === 0) {
+                document.getElementById('uploaded-files').classList.add('hidden');
+            }
+            
+            updateGenerateButton();
+        }
+
+        function updateGenerateButton() {
+            const generateBtn = document.getElementById('generate-report-btn');
+            if (generateBtn) {
+                const canGenerate = selectedCompetency && uploadedFiles.length > 0;
+                generateBtn.disabled = !canGenerate;
+            }
+        }
+
+        function generateReport() {
+            if (!selectedCompetency || uploadedFiles.length === 0) {
+                alert('Please select a competency unit and upload at least one file.');
+                return;
+            }
+
+            // Show loading state
+            const generateBtn = document.getElementById('generate-report-btn');
+            const originalText = generateBtn.innerHTML;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating Report...';
+            generateBtn.disabled = true;
+
+            // TODO: Implement actual API call to generate report
+            // Simulate API call delay
+            setTimeout(() => {
+                showPage('report');
+                generateBtn.innerHTML = originalText;
+                generateBtn.disabled = false;
+            }, 2000);
+        }
+
+        function downloadReport() {
+            // TODO: Implement actual download functionality
+            // For demo purposes, create a mock download
+            const link = document.createElement('a');
+            link.href = 'data:application/pdf;base64,'; // Mock PDF data
+            link.download = 'EduValidate_Report_' + new Date().toISOString().split('T')[0] + '.pdf';
+            
+            // Show download notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-success text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            notification.innerHTML = '<i class="fas fa-download mr-2"></i>Report download started';
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
+        }
+
+        function toggleFullscreen() {
+            // TODO: Implement fullscreen PDF viewer functionality
+            alert('Fullscreen view would be implemented here');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('landing');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuButton = event.target.closest('button');
+            
+            if (!mobileMenu.contains(event.target) && !menuButton) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

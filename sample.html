@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assessment Validation Report</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .assessment-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 20px;
+      width: 300px;
+      max-width: 100%;
+      height: auto;
+    }
+    .how-it-works, .training-requirements, .rules-principles {
+      background-color: #f2f2f2;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid black;
+    }
+    .how-it-works ol, .training-requirements ol, .rules-principles ol {
+      padding-left: 20px;
+      margin: 10px 0;
+    }
+    .how-it-works li, .training-requirements li, .rules-principles li {
+      margin-bottom: 10px;
+    }
+    p {
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    .info-table, .requirements-table, .evidence-table, .outcome-table, .mapping-table, .opportunities-table, .glossary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      background-color: white;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #e5e7eb;
+      font-weight: bold;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f3f4f6;
+    }
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin: 0 auto;
+      display: block;
+      border: 1px solid black;
+      box-sizing: border-box;
+    }
+    .subsection {
+      margin-bottom: 20px;
+    }
+    .subsection ul {
+      padding-left: 20px;
+    }
+    .subsection li {
+      margin-bottom: 10px;
+    }
+    @media (max-width: 768px) {
+      .info-table, .requirements-table, .evidence-table, .outcome-table, .mapping-table, .opportunities-table, .glossary-table {
+        display: block;
+        overflow-x: auto;
+      }
+      .requirements-table thead, .evidence-table thead, .outcome-table thead, .mapping-table thead, .opportunities-table thead {
+        display: none;
+      }
+      .requirements-table tbody, .evidence-table tbody, .outcome-table tbody, .mapping-table tbody, .opportunities-table tbody {
+        display: block;
+      }
+      .requirements-table tr, .evidence-table tr, .outcome-table tr, .mapping-table tr, .opportunities-table tr {
+        display: block;
+        margin-bottom: 16px;
+        border: 1px solid black;
+      }
+      .requirements-table td, .evidence-table td, .outcome-table td, .mapping-table td, .opportunities-table td {
+        display: block;
+        text-align: right;
+        padding: 8px;
+        position: relative;
+        border: none;
+        border-bottom: 1px solid black;
+      }
+      .requirements-table td::before, .evidence-table td::before, .outcome-table td::before, .mapping-table td::before, .opportunities-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 8px;
+        font-weight: bold;
+      }
+      .requirements-table td:last-child, .evidence-table td:last-child, .outcome-table td:last-child, .mapping-table td:last-child, .opportunities-table td:last-child {
+        border-bottom: none;
+      }
+      .requirements-table td[data-label="Yes"], .requirements-table td[data-label="No"], .evidence-table td[data-label="Yes"], .evidence-table td[data-label="No"] {
+        text-align: center;
+      }
+    }
+    .mapping-table td:empty {
+      background-color: transparent;
+      border-top: none;
+      border-bottom: none;
+      border-left: 1px solid black;
+      border-right: 1px solid black;
+    }
+    .mapping-table td:first-child:not(:empty) {
+      font-weight: bold;
+      padding-top: 12px;
+      background-color: #f9f9f9;
+      border-left: 1px solid black;
+    }
+    .mapping-table td:last-child {
+      border-right: 1px solid black;
+    }
+    .mapping-table tr:first-child td {
+      border-top: 1px solid black;
+    }
+    .mapping-table tr:last-child td {
+      border-bottom: 1px solid black !important;
+    }
+    .mapping-table tr:last-child td:first-child {
+      border-left: 1px solid black;
+    }
+    .mapping-table tr:last-child td:last-child {
+      border-right: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <div class="assessment-container">
+    <img src="https://via.placeholder.com/300x100?text=EduValidate+Logo" alt="EduValidate Logo" class="logo">
+    <section class="how-it-works">
+      <h5 class="text-lg font-bold">How EduValidate Works</h5>
+      <p>
+        EduValidate undergoes a rigorous three-part review process to ensure full compliance and quality:
+      </p>
+      <ol>
+        <li>
+          <span class="bold">Training Package Requirements</span><br>
+          EduValidate checks alignment with unit requirements, including elements, performance criteria, foundation skills, performance evidence, and knowledge evidence.
+        </li>
+        <li>
+          <span class="bold">Rules of Evidence</span><br>
+          Each assessment is assessed for validity, sufficiency, authenticity, and currency to ensure the evidence collected supports a reliable competency judgment.
+        </li>
+        <li>
+          <span class="bold">Principles of Assessment</span><br>
+          EduValidate evaluates whether the assessment meets the standards of fairness, flexibility, validity, and reliability in design and application.
+        </li>
+      </ol>
+      <p>
+        This comprehensive review gives you a clear snapshot of where your assessment meets expectations—and where improvements are needed.
+      </p>
+    </section>
+    <section class="training-info">
+      <table class="info-table">
+        <tbody>
+          <tr>
+            <td class="bold">Training Product</td>
+            <td>Assessor Guide</td>
+          </tr>
+          <tr>
+            <td class="bold">Unit of Competency</td>
+            <td>BSBCMM211</td>
+          </tr>
+          <tr>
+            <td class="bold">Assessment Tools reviewed</td>
+            <td>Assessor's Guide BSBCMM211 Apply communication skills</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <table class="requirements-table">
+        <thead>
+          <tr>
+            <th colspan="4">Training Package Requirements</th>
+          </tr>
+          <tr>
+            <th>Evidence required:</th>
+            <th>Yes</th>
+            <th>No</th>
+            <th>Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Evidence required:">The Elements and Performance Criteria were addressed in the assessment task(s)</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">All elements and performance criteria are addressed across the three assessment tasks (AT1: Knowledge Questions, AT2: Project, and AT3: Performance Demonstration) as detailed on pages 4-21 of the Assessor's Guide.</td>
+          </tr>
+          <tr>
+            <td data-label="Evidence required:">The Performance Evidence were addressed in the assessment task(s)</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">The performance evidence requirements, including verbal/non-verbal communication and drafting written documents, are addressed through AT2 (Project) and AT3 (Performance Demonstration) as described on pages 10-21.</td>
+          </tr>
+          <tr>
+            <td data-label="Evidence required:">The Knowledge Evidence were addressed in the assessment task(s)</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">The knowledge evidence requirements are covered by the knowledge questions in AT1 and the application of knowledge in AT2, as shown on pages 4-16.</td>
+          </tr>
+          <tr>
+            <td data-label="Evidence required:">The Assessment Conditions were addressed in the assessment task(s)</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">The assessment conditions, including access to workplace policies and procedures, are outlined on page 3 and integrated into AT2 (Project).</td>
+          </tr>
+          <tr>
+            <td data-label="Evidence required:">Licensing or regulatory requirements associated with the unit were met</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">Page 1 states, "No licensing, legislative or certification requirements apply to this unit at the time of publication."</td>
+          </tr>
+          <tr>
+            <td data-label="Evidence required:">The Assessment tool has appropriate literacy and numeracy requirements for unit of competency level.</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">The assessment tasks involve reading, writing, and interpreting information, demonstrating appropriate literacy skills. While not explicitly stated, the tasks implicitly require basic numeracy skills for tasks like formatting documents and understanding numerical information within the context of the scenarios.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="rules-principles">
+      <h2 class="text-xl font-bold">Rules of Evidence and Principles of Assessment</h2>
+      <div class="subsection">
+        <h3 class="text-lg font-bold">Rules of Evidence</h3>
+        <ul>
+          <li><span class="bold">VALIDITY</span> - Assessment evidence is adequate, such that the assessor can be reasonably assured that the VET student possesses the skills and knowledge described in the training product.</li>
+          <li><span class="bold">SUFFICIENCY</span> - the quality, quantity and relevance of the assessment evidence enables the assessor to make an informed judgement of the VET student’s competency in the skills and knowledge described in the training product.</li>
+          <li><span class="bold">AUTHENTICITY</span> - the assessor is assured that a VET student’s assessment evidence is the original and genuine work of that VET student</li>
+          <li><span class="bold">CURRENCY</span> - the assessment evidence presented to the assessor documents and demonstrates the VET student’s current skills and knowledge.</li>
+        </ul>
+      </div>
+      <div class="subsection">
+        <h3 class="text-lg font-bold">Principles of Assessment</h3>
+        <ul>
+          <li><span class="bold">FAIRNESS</span> - assessment accommodates the needs of the VET student, including implementing reasonable adjustments where appropriate and enabling reassessment where necessary.</li>
+          <li><span class="bold">FLEXIBILITY</span> - assessment is appropriate to the context, training product and VET student, and assesses the VET student’s skills and knowledge that are relevant to the training product, regardless of how or where the VET student has acquired those skills or that knowledge.</li>
+          <li><span class="bold">VALIDITY</span> - assessment includes practical application components that enable the VET student to demonstrate the relevant skills and knowledge in a practical setting.</li>
+          <li><span class="bold">RELIABILITY</span> - assessment evidence is interpreted consistently by assessors and the outcomes of assessment are comparable irrespective of which assessor is conducting the assessment.</li>
+        </ul>
+      </div>
+    </section>
+    <section class="evidence-produced">
+      <h2 class="text-xl font-bold">Evidence Produced</h2>
+      <table class="evidence-table">
+        <thead>
+          <tr>
+            <th>Q</th>
+            <th>Evidence produced has addressed;</th>
+            <th>Yes</th>
+            <th>No</th>
+            <th>Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Q">1</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool collects an adequate amount of evidence to make a judgment of competency across all unit requirements.</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">The assessment tasks cover all elements and performance criteria of the unit BSBCMM211.  AT1 (Knowledge Questions - page 4) assesses knowledge requirements. AT2 (Project - page 4) assesses the application of communication skills through creating and revising written documents (email, newsletter article, and flyer). AT3 (Performance Demonstration - page 4) assesses verbal and non-verbal communication skills during interactions with the supervisor for feedback on the written documents.</td>
+          </tr>
+          <tr>
+            <td data-label="Q">2</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool collects adequate evidence over time and under different conditions or contexts to make a judgment of competency across all unit requirements.</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">The AT2 Project (page 10) requires students to create three different types of written documents (email, newsletter article, flyer) which allows for assessment of written communication skills in different contexts.  Furthermore, the three face-to-face meetings with the supervisor in AT2 (page 10) and the observation in AT3 (page 17) provide opportunities to assess verbal and non-verbal communication skills over time and in different situations (seeking feedback, applying feedback, presenting drafts).</td>
+          </tr>
+          <tr>
+            <td data-label="Q">3</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool demonstrates a clear and logical connection between what is being assessed and the specific skills and knowledge requirements of the unit of competency.</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">The assessment tasks directly relate to the unit's performance criteria. For example, creating written documents in AT2 (page 10) addresses the criteria related to conveying information through different formats. The face-to-face interactions in AT2 and the observation in AT3 (page 17) address the criteria related to verbal and non-verbal communication skills. The knowledge questions in AT1 (page 4) assess the underpinning knowledge required for effective communication.</td>
+          </tr>
+          <tr>
+            <td data-label="Q">4</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tools context, conditions, and resources of the assessment are realistic and appropriately reflect workplace expectations</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">The assessment context simulates a workplace scenario where the student acts as an Administrative Assistant (page 11). The tasks involve creating workplace documents (email, newsletter article, flyer - page 10) and interacting with a supervisor (page 10) for feedback, reflecting typical workplace communication activities. The required resources, such as access to workplace policies and procedures (page 3), further enhance the realism of the assessment.</td>
+          </tr>
+          <tr>
+            <td data-label="Q">5</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool includes opportunities for direct observation, questioning, or discussion to support that the student genuinely holds the demonstrated skills and knowledge.</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">AT1 (Knowledge Questions - page 4) allows for assessing knowledge. AT2 (Project - page 10) involves face-to-face meetings with the supervisor, providing opportunities for questioning and discussion about the created documents and communication skills. AT3 (Performance Demonstration - page 17) is a direct observation of the student's verbal and non-verbal communication skills during the feedback meetings.</td>
+          </tr>
+          <tr>
+            <td data-label="Q">6</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool has a systematic process in place (such as candidate declaration or equivalent) to ensure candidates are submitting their own work</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">Page 2 mentions that "Students must submit an acknowledgement that the assessment methods and tasks have been explained by the Assessor, and that the Student will make all reasonable attempts to complete the tasks by the agreed submission dates".  This implies a declaration by the student.</td>
+          </tr>
+          <tr>
+            <td data-label="Q">7</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool has a systematic process in place to detect or discourage plagiarism, collusion, or use of unauthorised assistance (e.g. AI tools)</td>
+            <td data-label="Yes"><input type="checkbox" disabled></td>
+            <td data-label="No"><input type="checkbox" checked disabled></td>
+            <td data-label="Comments">The provided document does not explicitly mention any systematic processes for plagiarism detection or discouragement of collusion or AI tool usage.</td>
+          </tr>
+          <tr>
+            <td data-label="Q">8</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool provides opportunities that demonstrate the submission is the recent, original and genuine work of the student.</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">The three face-to-face meetings with the supervisor (assessor) for feedback and revisions (AT2, pages 10, 12, 14) provide opportunities to gauge the student's understanding and ensure the work is original and genuine.  The observation component (AT3, page 17 onwards) further reinforces this by directly observing the student's communication skills in action.</td>
+          </tr>
+          <tr>
+            <td data-label="Q">9</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool provides candidates information about their rights to reasonable adjustment and how to access it.</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">Page 3 mentions reasonable adjustments and refers to the IVET Staff Handbook for further information.</td>
+          </tr>
+          <tr>
+            <td data-label="Q">10</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool allows the assessor to record reasonable adjustments and the rationale behind them.</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">Page 23 explicitly states, "In the event that an Assessor has made a Reasonable Adjustment...the Assessor must make sufficient notes as record of the adjustments made."</td>
+          </tr>
+          <tr>
+            <td data-label="Q">11</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool clearly explains the assessment criteria and the standard and/or evidence required to be competent.</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">The Assessor's Guide (Page 4) provides a summary of assessment tasks, including Knowledge Questions (AT1), Project (AT2), and Performance Demonstration (AT3).  Each assessment task has detailed instructions and criteria outlined within the guide and the Student Assessment Guide (Page 2).  For example, AT1 (Knowledge Questions) explicitly states that "Students must respond satisfactorily to all questions…" (Page 5), setting a clear standard.  AT2 (Project) provides detailed instructions for each part of the project, including specific criteria for the email, newsletter article, and flyer (Pages 11-14).  AT3 (Performance Demonstration) outlines the criteria for observation, including specific observable skills (Page 18).</td>
+          </tr>
+          <tr>
+            <td data-label="Q">12</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool explains the process for reassessment if the candidate does not achieve competency during assessment.</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">The Assessor's Guide explicitly states, "…in the event that any assessment task is initially judged unsatisfactory, there is the opportunity to be assessed on a maximum of three occasions - the original attempt and two further attempts" (Page 4).  Further, it emphasizes providing feedback and follow-up for students who do not demonstrate competency, offering options for resubmission, further training, or counseling (Page 2).</td>
+          </tr>
+          <tr>
+            <td data-label="Q">13</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool informs the candidates of their rights to Recognition of Prior Learning and how to access it.</td>
+            <td data-label="Yes"><input type="checkbox" disabled></td>
+            <td data-label="No"><input type="checkbox" checked disabled></td>
+            <td data-label="Comments">The provided document does not mention Recognition of Prior Learning (RPL).</td>
+          </tr>
+          <tr>
+            <td data-label="Q">14</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool has clear assessment instructions for assessors to conduct assessment consistently across multiple cohorts</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">The Assessor's Guide provides detailed instructions for each assessment task.  For AT1 (Knowledge Questions), it specifies how to assess multiple-choice and other question types (Page 5).  For AT2 (Project), it outlines the steps for conducting the project, including face-to-face meetings with the student and providing feedback (Pages 10-15).  For AT3 (Performance Demonstration), it provides specific instructions for observing the student's performance and using the observation checklist (Pages 17-18).  The guide also emphasizes consistent application of assessment principles and rules of evidence (Page 2).</td>
+          </tr>
+          <tr>
+            <td data-label="Q">15</td>
+            <td data-label="Evidence produced has addressed;">The Assessment tool has clear marking guides or model answers for assessors to make consistent judgements across multiple cohorts</td>
+            <td data-label="Yes"><input type="checkbox" checked disabled></td>
+            <td data-label="No"><input type="checkbox" disabled></td>
+            <td data-label="Comments">The Assessor's Guide includes model answers for the knowledge questions in AT1 (Pages 5-8).  For AT2 (Project), specific criteria are provided for each written document, guiding assessors in evaluating the student's work (Pages 11-14).  AT3 (Performance Demonstration) includes an observation checklist with specific observable skills, ensuring consistent evaluation across different assessors (Pages 19-21).  The guide also emphasizes recording all feedback and assessment outcomes on the IVET Portal for transparency and consistency (Page 2).</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="outcome">
+      <h2 class="text-xl font-bold">Outcome</h2>
+      <table class="outcome-table">
+        <thead>
+          <tr>
+            <th colspan="4">Rules of Evidence</th>
+          </tr>
+          <tr>
+            <th>VALIDITY</th>
+            <th>SUFFICIENCY</th>
+            <th>AUTHENTICITY</th>
+            <th>CURRENCY</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="VALIDITY"><input type="checkbox" checked disabled></td>
+            <td data-label="SUFFICIENCY"><input type="checkbox" checked disabled></td>
+            <td data-label="AUTHENTICITY"><input type="checkbox" disabled></td>
+            <td data-label="CURRENCY"><input type="checkbox" checked disabled></td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="outcome-table">
+        <thead>
+          <tr>
+            <th colspan="4">Principles of Assessment</th>
+          </tr>
+          <tr>
+            <th>FAIRNESS</th>
+            <th>FLEXIBILITY</th>
+            <th>VALIDITY</th>
+            <th>RELIABILITY</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="FAIRNESS"><input type="checkbox" disabled></td>
+            <td data-label="FLEXIBILITY"><input type="checkbox" checked disabled></td>
+            <td data-label="VALIDITY"><input type="checkbox" checked disabled></td>
+            <td data-label="RELIABILITY"><input type="checkbox" checked disabled></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="assessment-mapping">
+      <h2 class="text-xl font-bold">Assessment Mapping</h2>
+      <table class="mapping-table">
+        <thead>
+          <tr>
+            <th colspan="3">BSBCMM211 Apply communication skills</th>
+          </tr>
+          <tr>
+            <th>Element</th>
+            <th>Performance criteria</th>
+            <th>Assessment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="section-header" data-label="Element">1. Identify communication requirements</td>
+            <td data-label="Performance criteria">1.1 identify work task</td>
+            <td data-label="Assessment">AT2</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">1.2 identify communication channels in the organisation</td>
+            <td data-label="Assessment">AT1 (Questions 1 and 2), AT2</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">1.3 identify relevant stakeholders</td>
+            <td data-label="Assessment">AT2</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">1.4 seek advice from supervisor on communication methods</td>
+            <td data-label="Assessment">AT2, AT3</td>
+          </tr>
+          <tr>
+            <td class="section-header" data-label="Element">2. Communicate using verbal and non-verbal communication skills</td>
+            <td data-label="Performance criteria">2.1 plan verbal communication</td>
+            <td data-label="Assessment">AT2, AT3</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">2.2 use verbal communication to communicate with stakeholders</td>
+            <td data-label="Assessment">AT3</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">2.3 use non-verbal behaviour to communicate with stakeholders</td>
+            <td data-label="Assessment">AT3</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">2.4 seek and respond to feedback on communication</td>
+            <td data-label="Assessment">AT3</td>
+          </tr>
+          <tr>
+            <td class="section-header" data-label="Element">3. Draft written communications</td>
+            <td data-label="Performance criteria">3.1 identify formats for written information according to organisational policies and procedures</td>
+            <td data-label="Assessment">AT2</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">3.2 draft written information and submit to supervisor for approval</td>
+            <td data-label="Assessment">AT2</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">3.3 seek and respond to feedback on written communication</td>
+            <td data-label="Assessment">AT2, AT3</td>
+          </tr>
+          <tr>
+            <td class="section-header" data-label="Element">Performance evidence</td>
+            <td data-label="Performance criteria">The candidate must demonstrate the ability to complete the tasks outlined in the elements, performance criteria and foundation skills of this unit, including evidence of the ability to:</td>
+            <td data-label="Assessment"></td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">Use verbal and non-verbal skills to seek and convey information in face-to-face situations on at least three occasions</td>
+            <td data-label="Assessment">AT3</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">Draft written documents and confirm that the documents meet organisational requirements on at least three occasions.</td>
+            <td data-label="Assessment">AT2</td>
+          </tr>
+          <tr>
+            <td class="section-header" data-label="Element">Knowledge evidence</td>
+            <td data-label="Performance criteria">The candidate must be able to demonstrate knowledge to complete the tasks outlined in the elements, performance criteria and foundation skills of this unit, including knowledge of:</td>
+            <td data-label="Assessment"></td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">Organisational policies and procedures related to workplace communication</td>
+            <td data-label="Assessment">AT1 (Questions 3), AT2</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">Communication styles</td>
+            <td data-label="Assessment">AT1 (Questions 5, 6, 7, 8, and 9), AT2</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">Questioning, listening and speaking skills</td>
+            <td data-label="Assessment">AT1 (Questions 5, 6, and 7), AT3</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">Standards of written information applicable to own role</td>
+            <td data-label="Assessment">AT1 (Question 4), AT2</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">Presentation styles, format and detail relevant to own role.</td>
+            <td data-label="Assessment">AT1 (Question 9), AT2</td>
+          </tr>
+          <tr>
+            <td class="section-header" data-label="Element">Assessment conditions</td>
+            <td data-label="Performance criteria">Skills in this unit must be demonstrated in a workplace or simulated environment where the conditions are typical of those in a working environment in this industry. This includes access to:</td>
+            <td data-label="Assessment"></td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">Workplace policies and procedures relating to communication.</td>
+            <td data-label="Assessment">AT2 states that the student must access and understand the provided 'BSBCMM211_Communication Policy and Procedure' document.</td>
+          </tr>
+          <tr>
+            <td data-label="Element"></td>
+            <td data-label="Performance criteria">Assessors of this unit must satisfy the requirements for assessors in applicable vocational education and training legislation, frameworks and/or standards.</td>
+            <td data-label="Assessment">Not assessed within the tasks themselves, but a requirement for the assessor outlined in the document.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="opportunities">
+      <h2 class="text-xl font-bold">Opportunities for Improvement</h2>
+      <table class="opportunities-table">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Recommendation</th>
+            <th>Agreed rectification actions</th>
+            <th>Allocate a Lead Person</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="No.">1.</td>
+            <td data-label="Recommendation">The Assessment tool does not have a systematic process in place to detect or discourage plagiarism, collusion, or use of unauthorised assistance (e.g. AI tools). The Assessment tool should be redesigned to ensure the process for the detection of, or the discouraging of plagiarism, collusion, or use of unauthorised assistance e.g. AI tools is explained to candidates.</td>
+            <td data-label="Agreed rectification actions"></td>
+            <td data-label="Allocate a Lead Person"></td>
+            <td data-label="Date"></td>
+          </tr>
+          <tr>
+            <td data-label="No.">2.</td>
+            <td data-label="Recommendation">The Assessment tool does not inform the candidate of their rights to Recognition of Prior Learning and how to access it. The Assessment tool should inform candidates of their rights to Recognition of Prior Learning and how to access it prior to any assessment being undertaken.</td>
+            <td data-label="Agreed rectification actions"></td>
+            <td data-label="Allocate a Lead Person"></td>
+            <td data-label="Date"></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="glossary">
+      <h2 class="text-xl font-bold">Glossary</h2>
+      <table class="glossary-table">
+        <tbody>
+          <tr>
+            <td class="bold">assessment</td>
+            <td>means the process by which an NVR registered training organisation, or a third party delivering services on its behalf, collects evidence for the purposes of determining whether a VET student is competent to perform to the standard specified in the training product.</td>
+          </tr>
+          <tr>
+            <td class="bold">assessment judgement</td>
+            <td>means a determination of whether competency has been achieved by a VET student consistent with the training product and this instrument.</td>
+          </tr>
+          <tr>
+            <td class="bold">assessment system</td>
+            <td>means a coordinated set of documented policies, procedures and assessment tools designed to ensure that assessment, including recognition of prior learning, produces consistent and valid judgements of VET student competency and meets the requirements of this instrument.</td>
+          </tr>
+          <tr>
+            <td class="bold">assessment tools</td>
+            <td>mean the instrument, instructions and methods used to gather and interpret assessment evidence for the purposes of determining VET student competency, including:<br>(a) the context and conditions of assessment.<br>(b) the tasks to be administered to the VET student.<br>(c) an outline of the assessment evidence to be gathered from the VET student.<br>(d) the criteria used to judge VET student competency; and<br>(e) the administration, recording and reporting requirements for assessments and assessment evidence.</td>
+          </tr>
+          <tr>
+            <td class="bold">training product</td>
+            <td>means an AQF qualification, a skill set, a unit of competency, accredited short course or module.</td>
+          </tr>
+          <tr>
+            <td class="bold">unit of competency</td>
+            <td>means the specification of the standards of performance required in the workplace as defined in a training product.</td>
+          </tr>
+          <tr>
+            <td class="bold">validation</td>
+            <td>means the review of the assessment system to ensure that:<br>(a) assessment tools are consistent with the training product and the requirements set out in this instrument; and<br>(b) assessments and assessment judgements are producing consistent outcomes.</td>
+          </tr>
+          <tr>
+            <td class="bold">Fairness</td>
+            <td>The assessment accommodates the needs of the VET student, including implementing reasonable adjustments where appropriate and enabling reassessment where necessary;</td>
+          </tr>
+          <tr>
+            <td class="bold">Flexibility</td>
+            <td>The assessment is appropriate to the context, training product and VET student, and assesses the VET student’s skills and knowledge that are relevant to the training product, regardless of how or where the VET student has acquired those skills or that knowledge;</td>
+          </tr>
+          <tr>
+            <td class="bold">Validity</td>
+            <td>The assessment includes practical application components that enable the VET student to demonstrate the relevant skills and knowledge in a practical setting;</td>
+          </tr>
+          <tr>
+            <td class="bold">Reliability</td>
+            <td>The assessment evidence is interpreted consistently by assessors and the outcomes of assessment are comparable irrespective of which assessor is conducting the assessment.</td>
+          </tr>
+          <tr>
+            <td class="bold">validity</td>
+            <td>The assessment evidence is adequate, such that the assessor can be reasonably assured that the VET student possesses the skills and knowledge described in the training product;</td>
+          </tr>
+          <tr>
+            <td class="bold">sufficiency</td>
+            <td>The quality, quantity and relevance of the assessment evidence enables the assessor to make an informed judgement of the VET student’s competency in the skills and knowledge described in the training product.</td>
+          </tr>
+          <tr>
+            <td class="bold">authenticity</td>
+            <td>The assessor is assured that a VET student’s assessment evidence is the original and genuine work of that VET student; and</td>
+          </tr>
+          <tr>
+            <td class="bold">currency</td>
+            <td>The assessment evidence presented to the assessor documents and demonstrates the VET student’s current skills and knowledge.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</body>
+</html>

@@ -1,0 +1,711 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduValidate - Assessment Tool Validation Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#1E40AF',
+                        'secondary': '#059669',
+                        'accent': '#DC2626',
+                        'muted': '#6B7280',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.6s ease-out',
+                        'fade-in': 'fadeIn 0.8s ease-out',
+                        'slide-in-right': 'slideInRight 0.7s ease-out',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .parallax-bg {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .file-upload-zone {
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-zone:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-upload-zone.drag-over {
+            border-color: #1E40AF;
+            background-color: #EFF6FF;
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50">
+
+    <!-- @COMPONENT: App -->
+    <div id="app" class="min-h-screen">
+        
+        <!-- @COMPONENT: NavigationHeader -->
+        <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <h1 class="text-2xl font-bold text-primary">EduValidate</h1>
+                        </div>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="#" class="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">Features</a>
+                            <a href="#" class="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">Pricing</a>
+                            <a href="#" class="text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium transition-colors">Support</a>
+                            <button onclick="showLoginModal()" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">Login</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <!-- @END_COMPONENT: NavigationHeader -->
+
+        <!-- @COMPONENT: LandingPage -->
+        <div id="landing-page" class="page-content">
+            
+            <!-- Hero Section -->
+            <section class="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
+                <!-- Background pattern overlay with professional feel -->
+                <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
+                
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                    <div data-aos="fade-up" data-aos-duration="1000">
+                        <h1 class="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+                            Validate Your Assessment Tools with
+                            <span class="text-primary">EduValidate</span>
+                        </h1>
+                        <p class="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                            Ensure your assessment tools meet Australian competency standards with AI-powered validation against training.gov.au requirements
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <button onclick="showLoginModal()" class="bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                                Get Started Today
+                            </button>
+                            <button class="border border-primary text-primary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary hover:text-white transition-all duration-200">
+                                Watch Demo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Floating elements for visual appeal -->
+                <div class="absolute top-1/4 left-10 w-20 h-20 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
+                <div class="absolute bottom-1/4 right-10 w-32 h-32 bg-indigo-200 rounded-full opacity-20 animate-pulse delay-1000"></div>
+            </section>
+
+            <!-- How It Works Section -->
+            <section class="py-20 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16" data-aos="fade-up">
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How EduValidate Works</h2>
+                        <p class="text-xl text-gray-600 max-w-2xl mx-auto">Simple, powerful validation process for your assessment tools</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <!-- Step 1 -->
+                        <div class="text-center" data-aos="fade-up" data-aos-delay="100">
+                            <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-upload text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Upload Assessment Tools</h3>
+                            <p class="text-gray-600">Upload your assessment tools in various formats. Our system supports documents, spreadsheets, and multiple file types.</p>
+                        </div>
+                        
+                        <!-- Step 2 -->
+                        <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+                            <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-cogs text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">AI-Powered Analysis</h3>
+                            <p class="text-gray-600">Our AI compares your tools against unit of competency requirements from training.gov.au with precision and accuracy.</p>
+                        </div>
+                        
+                        <!-- Step 3 -->
+                        <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+                            <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-file-alt text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Detailed Validation Report</h3>
+                            <p class="text-gray-600">Receive comprehensive reports showing requirements met, areas for improvement, and suggested enhancements.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="py-20 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <div data-aos="fade-right">
+                            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Comprehensive Assessment Validation</h2>
+                            <p class="text-lg text-gray-600 mb-8">EduValidate provides detailed mapping of your assessment tools against competency requirements, ensuring full compliance with Australian training standards.</p>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <i class="fas fa-check-circle text-secondary text-xl mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">Training.gov.au Integration</h4>
+                                        <p class="text-gray-600">Direct integration with official competency standards</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fas fa-check-circle text-secondary text-xl mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">Multiple Document Support</h4>
+                                        <p class="text-gray-600">Support for various file formats and assessment styles</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fas fa-check-circle text-secondary text-xl mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">Improvement Suggestions</h4>
+                                        <p class="text-gray-600">Actionable recommendations for enhancement</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div data-aos="fade-left">
+                            <!-- Professional dashboard mockup illustration -->
+                            <div class="bg-white rounded-2xl shadow-2xl p-8 transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                                <div class="space-y-4">
+                                    <div class="h-4 bg-primary rounded w-3/4"></div>
+                                    <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                                    <div class="h-4 bg-secondary rounded w-2/3"></div>
+                                    <div class="grid grid-cols-2 gap-4 mt-6">
+                                        <div class="h-20 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-check text-secondary text-2xl"></i>
+                                        </div>
+                                        <div class="h-20 bg-red-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-exclamation text-accent text-2xl"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="py-20 bg-primary">
+                <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8" data-aos="fade-up">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Validate Your Assessment Tools?</h2>
+                    <p class="text-xl text-blue-100 mb-8">Join thousands of Australian education professionals using EduValidate to ensure compliance and quality.</p>
+                    <button onclick="showLoginModal()" class="bg-white text-primary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                        Start Free Trial
+                    </button>
+                </div>
+            </section>
+        </div>
+        <!-- @END_COMPONENT: LandingPage -->
+
+        <!-- @COMPONENT: LoginModal -->
+        <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform scale-95 opacity-0 transition-all duration-300" id="modal-content">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Welcome to EduValidate</h2>
+                    <p class="text-gray-600">Sign in to your account or create a new one</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="demo@eduvalidate.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="demo123">
+                    </div>
+                    
+                    <button onclick="handleLogin()" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                        Sign In
+                    </button>
+                    
+                    <div class="text-center">
+                        <p class="text-sm text-gray-600">
+                            Demo credentials: demo@eduvalidate.com / demo123
+                        </p>
+                    </div>
+                </div>
+                
+                <button onclick="hideLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: LoginModal -->
+
+        <!-- @COMPONENT: CompetencyDocumentPage -->
+        <div id="competency-page" class="page-content hidden min-h-screen bg-gray-50 pt-20">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="text-center mb-12" data-aos="fade-up">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Competency Document Selection</h1>
+                    <p class="text-lg text-gray-600">Select a competency unit and upload your assessment tool for validation</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-xl p-8 space-y-8" data-aos="fade-up" data-aos-delay="200">
+                    <!-- @STATE: selectedDocument:string = '' -->
+                    <div>
+                        <label class="block text-lg font-semibold text-gray-900 mb-4">
+                            <i class="fas fa-file-alt text-primary mr-2"></i>
+                            Select Competency Document
+                        </label>
+                        <select id="document-dropdown" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-lg">
+                            <option value="">Choose a competency unit...</option>
+                            <option value="document1" data-mock="true">BSBCMM211 - Apply communication skills</option>
+                            <!-- @MAP: competencyUnits.map(unit => ( -->
+                            <!-- <option value={unit.id}>{unit.code} - {unit.title}</option> -->
+                            <!-- @END_MAP )) -->
+                        </select>
+                    </div>
+                    
+                    <!-- Upload Section -->
+                    <div id="upload-section" class="hidden">
+                        <label class="block text-lg font-semibold text-gray-900 mb-4">
+                            <i class="fas fa-cloud-upload-alt text-primary mr-2"></i>
+                            Upload Assessment Tool
+                        </label>
+                        
+                        <div id="file-upload-zone" class="file-upload-zone border-2 border-dashed border-gray-300 rounded-xl p-12 text-center cursor-pointer hover:border-primary transition-colors">
+                            <i class="fas fa-file-upload text-4xl text-gray-400 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-2">Drop your assessment tool here</h3>
+                            <p class="text-gray-500 mb-4">or click to browse files</p>
+                            <p class="text-sm text-gray-400">Supports: PDF, DOC, DOCX, XLS, XLSX (Max 10MB)</p>
+                            <input type="file" id="file-input" class="hidden" accept=".pdf,.doc,.docx,.xls,.xlsx" multiple data-implementation="Handle file upload with validation">
+                        </div>
+                        
+                        <!-- @STATE: uploadedFiles:Array = [] -->
+                        <div id="uploaded-files" class="mt-4 space-y-2 hidden">
+                            <!-- Uploaded files will appear here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Generate Report Button -->
+                    <div id="generate-section" class="hidden text-center">
+                        <button onclick="generateReport()" class="bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                            <i class="fas fa-magic mr-2"></i>
+                            Generate Validation Report
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Logout Button -->
+                <div class="text-center mt-8">
+                    <button onclick="logout()" class="text-gray-600 hover:text-primary font-medium">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: CompetencyDocumentPage -->
+
+        <!-- @COMPONENT: ValidationReportPage -->
+        <div id="report-page" class="page-content hidden min-h-screen bg-gray-50 pt-20">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="text-center mb-8" data-aos="fade-up">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Validation Report</h1>
+                    <p class="text-lg text-gray-600">Comprehensive analysis of your assessment tool</p>
+                </div>
+                
+                <!-- Report Header -->
+                <div class="bg-white rounded-2xl shadow-xl p-6 mb-8" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-900" data-bind="selectedDocument">BSBCMM211 - Apply communication skills</h2>
+                            <p class="text-gray-600" data-bind="uploadedFileName">Assessment_Tool_v1.pdf</p>
+                            <p class="text-sm text-gray-500" data-bind="reportGeneratedDate">Generated on: November 28, 2024</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="downloadReport()" class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-download mr-2"></i>
+                                Download Report
+                            </button>
+                            <button onclick="goBackToUpload()" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                New Validation
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Report Summary Cards -->
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-green-50 border border-green-200 rounded-xl p-6 text-center" data-aos="fade-up" data-aos-delay="300">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-check text-green-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-green-700" data-bind="requirementsMet">12</h3>
+                        <p class="text-green-600 font-medium">Requirements Met</p>
+                    </div>
+                    
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-6 text-center" data-aos="fade-up" data-aos-delay="400">
+                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-times text-red-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-red-700" data-bind="requirementsNotMet">3</h3>
+                        <p class="text-red-600 font-medium">Requirements Not Met</p>
+                    </div>
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center" data-aos="fade-up" data-aos-delay="500">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-lightbulb text-blue-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-blue-700" data-bind="suggestions">8</h3>
+                        <p class="text-blue-600 font-medium">Improvement Suggestions</p>
+                    </div>
+                </div>
+                
+                <!-- PDF Viewer Container -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden" data-aos="fade-up" data-aos-delay="600">
+                    <div class="bg-gray-100 px-6 py-4 border-b">
+                        <h3 class="text-lg font-semibold text-gray-900">
+                            <i class="fas fa-file-pdf text-red-500 mr-2"></i>
+                            Detailed Validation Report
+                        </h3>
+                    </div>
+                    
+                    <!-- @FUNCTIONALITY: PDF viewer should display the actual validation report PDF -->
+                    <div class="p-6">
+                        <div class="bg-gray-50 rounded-lg p-8 text-center min-h-96">
+                            <i class="fas fa-file-pdf text-6xl text-red-500 mb-4"></i>
+                            <h4 class="text-xl font-semibold text-gray-700 mb-2">PDF Report Viewer</h4>
+                            <p class="text-gray-600 mb-6">
+                                The detailed validation report would be displayed here as an embedded PDF viewer.
+                                This includes requirements mapping, assessment criteria analysis, and improvement recommendations.
+                            </p>
+                            
+                            <!-- Mock PDF content preview -->
+                            <div class="bg-white border rounded-lg p-6 text-left max-w-2xl mx-auto">
+                                <h5 class="font-bold text-gray-900 mb-3">Validation Report Summary</h5>
+                                <div class="space-y-3 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Assessment Criteria Coverage:</span>
+                                        <span class="font-semibold text-green-600">80%</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Performance Evidence:</span>
+                                        <span class="font-semibold text-green-600">Complete</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Knowledge Evidence:</span>
+                                        <span class="font-semibold text-red-600">Partial</span>
+                                    </div>
+                                    <div class="border-t pt-3 mt-3">
+                                        <p class="text-gray-700"><strong>Key Recommendation:</strong> Include more knowledge-based questions to fully cover the unit requirements.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- TODO: Implement actual PDF viewer using libraries like PDF.js -->
+                            <p class="text-sm text-gray-500 mt-4">
+                                Implementation note: Use PDF.js or similar library for actual PDF display
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional Actions -->
+                <div class="text-center mt-8">
+                    <button onclick="logout()" class="text-gray-600 hover:text-primary font-medium">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: ValidationReportPage -->
+
+    </div>
+    <!-- @END_COMPONENT: App -->
+
+    <script>
+        // Initialize AOS animations
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 100
+        });
+
+        // @STATE: currentPage:string = 'landing'
+        // @STATE: currentUser:object = null
+        // @STATE: selectedDocument:string = ''
+        // @STATE: uploadedFiles:Array = []
+
+        // Navigation Functions
+        function showPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(page => page.classList.add('hidden'));
+            
+            // Show selected page
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+                // Re-initialize AOS for the new page
+                AOS.refresh();
+            }
+        }
+
+        // Login Modal Functions
+        function showLoginModal() {
+            const modal = document.getElementById('login-modal');
+            const content = document.getElementById('modal-content');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function hideLoginModal() {
+            const modal = document.getElementById('login-modal');
+            const content = document.getElementById('modal-content');
+            
+            content.classList.add('scale-95', 'opacity-0');
+            content.classList.remove('scale-100', 'opacity-100');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // @FUNCTIONALITY: Authentication handler with validation
+        function handleLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // TODO: Implement proper authentication with backend API
+            // For demo purposes, accept demo credentials
+            if (email === 'demo@eduvalidate.com' && password === 'demo123') {
+                hideLoginModal();
+                showPage('competency-page');
+                // Clear form
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+            } else {
+                alert('Please use demo credentials: demo@eduvalidate.com / demo123');
+            }
+        }
+
+        function logout() {
+            // TODO: Clear authentication state
+            showPage('landing-page');
+            // Reset form states
+            document.getElementById('document-dropdown').value = '';
+            document.getElementById('upload-section').classList.add('hidden');
+            document.getElementById('generate-section').classList.add('hidden');
+        }
+
+        // Competency Document Page Functions
+        (function() {
+            const documentDropdown = document.getElementById('document-dropdown');
+            const uploadSection = document.getElementById('upload-section');
+            const generateSection = document.getElementById('generate-section');
+            const fileUploadZone = document.getElementById('file-upload-zone');
+            const fileInput = document.getElementById('file-input');
+            const uploadedFilesContainer = document.getElementById('uploaded-files');
+
+            if (documentDropdown) {
+                documentDropdown.addEventListener('change', function() {
+                    if (this.value) {
+                        uploadSection.classList.remove('hidden');
+                    } else {
+                        uploadSection.classList.add('hidden');
+                        generateSection.classList.add('hidden');
+                    }
+                });
+            }
+
+            // File Upload Functionality
+            if (fileUploadZone && fileInput) {
+                fileUploadZone.addEventListener('click', () => fileInput.click());
+
+                fileUploadZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    fileUploadZone.classList.add('drag-over');
+                });
+
+                fileUploadZone.addEventListener('dragleave', () => {
+                    fileUploadZone.classList.remove('drag-over');
+                });
+
+                fileUploadZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    fileUploadZone.classList.remove('drag-over');
+                    handleFiles(e.dataTransfer.files);
+                });
+
+                fileInput.addEventListener('change', (e) => {
+                    handleFiles(e.target.files);
+                });
+            }
+
+            function handleFiles(files) {
+                // TODO: Implement file validation and upload to backend
+                const allowedTypes = ['.pdf', '.doc', '.docx', '.xls', '.xlsx'];
+                const maxSize = 10 * 1024 * 1024; // 10MB
+                
+                Array.from(files).forEach(file => {
+                    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                    
+                    if (!allowedTypes.includes(fileExtension)) {
+                        alert(`File type ${fileExtension} is not supported. Please upload: ${allowedTypes.join(', ')}`);
+                        return;
+                    }
+                    
+                    if (file.size > maxSize) {
+                        alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+                        return;
+                    }
+                    
+                    displayUploadedFile(file);
+                });
+                
+                generateSection.classList.remove('hidden');
+            }
+
+            function displayUploadedFile(file) {
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-3';
+                fileDiv.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas fa-file text-green-600 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-green-800">${file.name}</p>
+                            <p class="text-sm text-green-600">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                        </div>
+                    </div>
+                    <button onclick="this.parentElement.remove(); checkFilesRemaining();" class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                uploadedFilesContainer.appendChild(fileDiv);
+                uploadedFilesContainer.classList.remove('hidden');
+            }
+        })();
+
+        function checkFilesRemaining() {
+            const uploadedFilesContainer = document.getElementById('uploaded-files');
+            const generateSection = document.getElementById('generate-section');
+            
+            if (uploadedFilesContainer.children.length === 0) {
+                uploadedFilesContainer.classList.add('hidden');
+                generateSection.classList.add('hidden');
+            }
+        }
+
+        // Report Generation
+        function generateReport() {
+            // TODO: Send files to backend API for validation processing
+            // Show loading state
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating Report...';
+            button.disabled = true;
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                showPage('report-page');
+            }, 3000);
+        }
+
+        // Report Page Functions
+        function downloadReport() {
+            // TODO: Implement actual PDF download from backend
+            // For demo, show download simulation
+            alert('Report download started! In production, this would download the actual PDF validation report.');
+        }
+
+        function goBackToUpload() {
+            showPage('competency-page');
+        }
+
+        // Handle modal clicks outside content
+        document.getElementById('login-modal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideLoginModal();
+            }
+        });
+
+        // Handle escape key for modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('login-modal');
+                if (!modal.classList.contains('hidden')) {
+                    hideLoginModal();
+                }
+            }
+        });
+
+        // Handle form submission on Enter key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const modal = document.getElementById('login-modal');
+                if (!modal.classList.contains('hidden')) {
+                    e.preventDefault();
+                    handleLogin();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
