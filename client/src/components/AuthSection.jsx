@@ -101,16 +101,16 @@ export default function AuthSection() {
       return data;
     },
     onSuccess: (data) => {
-  console.log("🔐 [Login] Login successful!");
-  console.log("🔐 [Login] Access token:", data.access_token);
+  // console.log("🔐 [Login] Login successful!");
+  // console.log("🔐 [Login] Access token:", data.access_token);
   
   const decoded = parseJwt(data.access_token);
-  console.log("🔐 [Login] Decoded JWT payload:", decoded);
-  console.log("🔐 [Login] Available fields:", Object.keys(decoded || {}));
-  console.log("🔐 [Login] Role:", decoded?.role);
-  console.log("🔐 [Login] Organization ID (organization_id):", decoded?.organization_id);
-  console.log("🔐 [Login] Organization ID (org_id):", decoded?.org_id);
-  console.log("🔐 [Login] ID:", decoded?.id);
+  // console.log("🔐 [Login] Decoded JWT payload:", decoded);
+  // console.log("🔐 [Login] Available fields:", Object.keys(decoded || {}));
+  // console.log("🔐 [Login] Role:", decoded?.role);
+  // console.log("🔐 [Login] Organization ID (organization_id):", decoded?.organization_id);
+  // console.log("🔐 [Login] Organization ID (org_id):", decoded?.org_id);
+  // console.log("🔐 [Login] ID:", decoded?.id);
   
   const role = decoded?.role;
 
@@ -121,13 +121,13 @@ export default function AuthSection() {
 
   setTimeout(() => {
     if (role === 0) {
-      console.log("🔐 [Login] Redirecting to /admin (Super Admin)");
+      // console.log("🔐 [Login] Redirecting to /admin (Super Admin)");
       navigate("/admin");
     } else if (role === 1 || role === 2) {
-      console.log(`🔐 [Login] Redirecting to /orgdashboard (Role: ${role})`);
+      // console.log(`🔐 [Login] Redirecting to /orgdashboard (Role: ${role})`);
       navigate("/orgdashboard");
     } else {
-      console.log("🔐 [Login] Redirecting to /documents (Fallback)");
+      // console.log("🔐 [Login] Redirecting to /documents (Fallback)");
       navigate("/documents");
     }
   }, 1000);
@@ -201,14 +201,14 @@ export default function AuthSection() {
       });
     },
     onError: (error) => {
-        if (error.message.toLowerCase().includes("email id already exists")) {
+        if (error.message.toLowerCase().includes("email id already exists") || error.message.toLowerCase().includes("email already exists")) {
             setErrors(prev => ({
                 ...prev,
-                emailId: "This email is already registered."
+                emailId: "Email already exists."
             }));
             toast({
                 title: "Duplicate Email",
-                description: "This email is already in use by another account.",
+                description: "Email already exists.",
                 variant: "destructive",
             });
         } else {

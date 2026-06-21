@@ -99,7 +99,7 @@ export default function AdminLayout({ isOrg = false }) {
           <main className={`flex-1 overflow-y-auto relative scroll-smooth bg-[#f8fafc] ${
             window.location.search.includes("view=subscription") 
               ? "p-0" 
-              : "p-8"
+              : "p-8 pb-24"
           }`}>
               <Outlet />
           </main>

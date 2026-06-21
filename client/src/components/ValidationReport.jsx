@@ -35,12 +35,10 @@ export default function ValidationReport() {
 
   useEffect(() => {
     if (apiResponse && apiResponse.pdf_content_base64) {
-      console.log("API Response received:", apiResponse.pdf_content_base64.substring(0, 50) + "..."); // Debug log
       setLoading(true);
       setError(null);
       try {
         const base64String = apiResponse.pdf_content_base64;
-        // Remove data URL prefix if present (e.g., 'data:application/pdf;base64,')
         const cleanBase64 = base64String.replace(/^data:application\/pdf;base64,/, '');
         const binaryString = atob(cleanBase64);
         const bytes = new Uint8Array(binaryString.length);
@@ -51,7 +49,6 @@ export default function ValidationReport() {
         const url = URL.createObjectURL(blob);
         setPdfBlob(blob);
         setPdfUrl(url);
-        console.log("PDF URL generated:", url); // Debug log
         setLoading(false);
       } catch (err) {
         console.error('Error processing PDF:', err);
@@ -66,7 +63,6 @@ export default function ValidationReport() {
     } else {
       setError('No PDF data available. Please generate a report first.');
       setLoading(false);
-      console.log("No apiResponse or pdf_content_base64"); // Debug log
     }
   }, [apiResponse, toast]);
 

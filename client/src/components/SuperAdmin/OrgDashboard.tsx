@@ -91,7 +91,10 @@ export function OrgDashboard() {
       if (res.success) {
         setReports(res.validation_reports || []);
         setTeamUsers(res.users || []);
-        setOrgStats(res.stats);
+        setOrgStats({
+          ...res.stats,
+          validation_report_count: res.validation_report_count
+        });
         setOrgInfo(res.organization);
         
         toast({
@@ -250,7 +253,7 @@ export function OrgDashboard() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+    <div className="space-y-6 pb-24 animate-in fade-in slide-in-from-bottom-2 duration-300">
       
       {/* Org Header Info */}
       {orgInfo && (
@@ -366,14 +369,16 @@ export function OrgDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-purple-600 text-white border-none shadow-lg h-36 flex flex-col justify-center overflow-hidden">
+        <Card className={`${orgInfo?.subscription?.name === 'Base' ? 'bg-blue-600' : 'bg-purple-600'} text-white border-none shadow-lg h-36 flex flex-col justify-center overflow-hidden transition-colors duration-500`}>
           <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-2 opacity-90">
-                <CheckCircle2 className="h-5 w-5 text-purple-200" />
-                <span className="font-medium text-xs uppercase tracking-widest text-purple-100">Plan Type</span>
+                <CheckCircle2 className="h-5 w-5 text-white/80" />
+                <span className="font-medium text-xs uppercase tracking-widest text-white/90">Plan Type</span>
               </div>
-              <div className="text-3xl font-bold">{orgInfo?.is_subscribed ? "Premium" : "Free"}</div>
-              <p className="text-[10px] text-purple-100 mt-1 uppercase tracking-tight">Current subscription</p>
+              <div className="text-3xl font-bold">{orgInfo?.subscription?.name || (loading ? "..." : "Free")}</div>
+              <p className="text-[10px] text-white/80 mt-1 uppercase tracking-tight">
+                {orgInfo?.is_subscribed ? "Subscribed" : "Current subscription"}
+              </p>
           </CardContent>
         </Card>
       </div>

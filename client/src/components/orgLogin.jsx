@@ -117,14 +117,21 @@ export default function OrgLogin() {
       if (response.ok) {
         setSubmitted(true); // Switch to success screen
       } else {
-        const msg = result.message || "Something went wrong. Please try again.";
-        if (msg.toLowerCase().includes("email id already exists")) {
-            setFieldErrors(prev => ({
-                ...prev,
-                email: "This email is already in use by another account."
-            }));
+        // Use message from API if available
+        const msg = result.message || result.error || result.detail || "Something went wrong. Please try again.";
+        
+        // Handle specific email existence patterns if they aren't already formatted exactly as expected
+        const lowerMsg = msg.toLowerCase();
+        if (lowerMsg.includes("under approval")) {
+          setError("The email/account is under approval. Please login when approved.");
+        } else if (lowerMsg.includes("email already exists") || lowerMsg.includes("email id already exists")) {
+          setError("Email already exists.");
+          setFieldErrors(prev => ({
+            ...prev,
+            email: "Email already exists."
+          }));
         } else {
-            setError(msg);
+          setError(msg);
         }
       }
     } catch (err) {

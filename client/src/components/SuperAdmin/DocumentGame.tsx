@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { 
   CheckCircle2, CloudUpload, FileText, Trash2, User, Upload, 
-  FileCheck, RefreshCw, Eye, AlertCircle, Clock, Download, X, Sparkles
+  FileCheck, RefreshCw, Eye, AlertCircle, Clock, Download, X, Sparkles,
+  SearchIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -71,11 +72,13 @@ export function DocumentGame() {
   // Map dynamic units from API to the expected format
   const competencyUnits = dynamicUnits.map(unit => {
     const unitCode = typeof unit === 'string' ? unit : (unit as any).unit_code || (unit as any).value;
-    return { value: unitCode, label: unitCode };
+    const unitName = (unit as any).unit_name || "";
+    return { value: unitCode, label: unitCode, name: unitName };
   });
 
   const filteredCompetencyUnits = competencyUnits.filter(unit =>
-    unit.label.toLowerCase().includes(searchQuery.toLowerCase())
+    unit.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    unit.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // --- Handlers for Assessment ---
@@ -181,7 +184,7 @@ export function DocumentGame() {
           title: "Error",
           description: "Failed to load PDF preview.",
           variant: "destructive",
-        });
+          });
       }
     } else {
         toast({
@@ -258,15 +261,17 @@ export function DocumentGame() {
   };
 
   const handlePreview = async (task_id: string, competency_document: string) => {
+      // Open modal instantly and clear old preview
+      setPreviewPdfUrl(null);
+      setPreviewFilename(`${competency_document}_Preview.pdf`);
+      setIsPreviewOpen(true);
       setPreviewLoadingId(task_id);
+
       try {
         const formData = new FormData();
         formData.append("task_id", task_id);
         formData.append("competency_document", competency_document);
-        formData.append("include_html", "False"); // Original logic requested JSON result I guess, or maybe handle redirect?
-        // Actually original logic navigated to /report with state. 
-        // We will try to just alert for now or implement a preview dialog if we knew the response format.
-        // Assuming response is JSON with result data.
+        formData.append("include_html", "False");
         
         const token = getAuthToken();
         const res = await fetch(`${API_BASE}/get_analyze-assessment-tool`, {
@@ -282,9 +287,57 @@ export function DocumentGame() {
 
       } catch (e: any) {
           toast({ title: "Preview Failed", description: e.message, variant: "destructive" });
+          setIsPreviewOpen(false);
       } finally {
           setPreviewLoadingId(null);
       }
+  };
+
+  const [downloadLoadingId, setDownloadLoadingId] = useState<string | null>(null);
+
+  const handleDirectDownload = async (task_id: string, competency_document: string, filename?: string) => {
+    setDownloadLoadingId(task_id);
+    try {
+      const formData = new FormData();
+      formData.append("task_id", task_id);
+      formData.append("competency_document", competency_document);
+      formData.append("include_html", "False");
+      
+      const token = getAuthToken();
+      const res = await fetch(`${API_BASE}/get_analyze-assessment-tool`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}`, ...HEADERS_NGROK },
+          body: formData,
+      });
+
+      if (!res.ok) throw new Error("Failed to download report");
+      const data = await res.json();
+      
+      if (data && data.pdf_content_base64) {
+        const base64String = data.pdf_content_base64;
+        const cleanBase64 = base64String.replace(/^data:application\/pdf;base64,/, '');
+        const binaryString = window.atob(cleanBase64);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        const blob = new Blob([bytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename || data.filename || `${competency_document}_Report.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        toast({ title: "Downloaded", description: "Report downloaded successfully!" });
+      }
+    } catch (e: any) {
+        toast({ title: "Download Failed", description: e.message, variant: "destructive" });
+    } finally {
+        setDownloadLoadingId(null);
+    }
   };
 
   useEffect(() => {
@@ -324,58 +377,111 @@ export function DocumentGame() {
         {activeTab === 'assessment' && (
             <div className="grid gap-6">
                 {/* Step 1 */}
-                <Card>
-                    <CardContent className="pt-6">
-                        <div className="flex items-center mb-4">
-                            <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm mr-4">1</div>
-                            <h3 className="text-lg font-bold">Select Competency Unit</h3>
+                <Card className="border-gray-200 dark:border-slate-700 shadow-sm overflow-visible">
+                    <CardContent className="p-8">
+                        <div className="flex items-center mb-6">
+                            <div className="w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm mr-4 shrink-0 shadow-lg shadow-blue-500/20">1</div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-slate-100 tracking-tight">Select Competency Unit</h3>
                         </div>
-                        <Select value={selectedCompetency} onValueChange={(v) => { setSelectedCompetency(v); setSearchQuery(""); }}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Choose a competency unit..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <div className="p-2"><Input placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} /></div>
-                                {filteredCompetencyUnits.map(u => (
-                                    <SelectItem key={u.value} value={u.value}>{u.label}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <div className="w-full">
+                             <Select value={selectedCompetency} onValueChange={(v) => { setSelectedCompetency(v); setSearchQuery(""); }}>
+                                <SelectTrigger className="h-auto py-4 px-6 border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-blue-500/50 transition-all rounded-xl shadow-sm group">
+                                    <SelectValue placeholder="Choose a competency unit...">
+                                        {selectedCompetency ? (
+                                            <div className="flex items-center gap-4 text-left">
+                                                <div className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 rounded text-blue-700 dark:text-blue-400 font-mono font-bold text-base border border-blue-100 dark:border-blue-800">
+                                                    {selectedCompetency}
+                                                </div>
+                                                <span className="text-base font-medium text-gray-700 dark:text-slate-300 truncate max-w-[800px]">
+                                                    {competencyUnits.find(u => u.value === selectedCompetency)?.name}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <span className="text-sm text-muted-foreground italic">Search and select a unit code...</span>
+                                        )}
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent className="max-h-[450px] rounded-xl border-gray-200 dark:border-slate-700 shadow-2xl">
+                                    <div className="sticky top-0 p-3 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700 z-10">
+                                        <div className="relative group">
+                                            <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                                            <Input 
+                                                placeholder="Search unit by code or name..." 
+                                                value={searchQuery} 
+                                                onChange={e => setSearchQuery(e.target.value)}
+                                                className="pl-10 h-11 bg-slate-50 dark:bg-slate-900 border-none focus-visible:ring-1 focus-visible:ring-blue-500 rounded-lg text-sm"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="p-2">
+                                        {filteredCompetencyUnits.length === 0 ? (
+                                            <div className="py-10 text-center text-sm text-muted-foreground italic">
+                                                No matching units found.
+                                            </div>
+                                        ) : (
+                                            filteredCompetencyUnits.map(u => (
+                                                <SelectItem 
+                                                    key={u.value} 
+                                                    value={u.value}
+                                                    className="rounded-lg my-1 hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors focus:bg-blue-50 dark:focus:bg-slate-700 cursor-pointer"
+                                                >
+                                                    <div className="flex items-center gap-4 py-1.5">
+                                                        <span className="font-mono font-bold text-blue-600 dark:text-blue-400 shrink-0 text-sm bg-blue-50/50 dark:bg-blue-900/20 px-2 py-0.5 rounded">
+                                                            {u.label}
+                                                        </span>
+                                                        <span className="text-sm text-gray-500 dark:text-slate-400 truncate max-w-[600px]">
+                                                            — {u.name}
+                                                        </span>
+                                                    </div>
+                                                </SelectItem>
+                                            ))
+                                        )}
+                                    </div>
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </CardContent>
                 </Card>
 
                 {/* Step 2 */}
                 {selectedCompetency && (
-                    <Card>
-                        <CardContent className="pt-6">
-                            <div className="flex items-center mb-4">
-                                <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm mr-4">2</div>
-                                <h3 className="text-lg font-bold">Upload Assessment Tools</h3>
+                    <Card className="border-gray-200 dark:border-slate-700 shadow-sm">
+                        <CardContent className="p-8">
+                            <div className="flex items-center mb-6">
+                                <div className="w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm mr-4 shadow-lg shadow-blue-500/20">2</div>
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-slate-100 tracking-tight">Upload Assessment Tools</h3>
                             </div>
                             <div 
-                                className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors cursor-pointer ${dragOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400'}`}
+                                className={`border-2 border-dashed rounded-xl p-12 text-center transition-all cursor-pointer ${dragOver ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-400 hover:bg-slate-50/50 dark:hover:bg-slate-900/50'}`}
                                 onDrop={handleDrop}
                                 onDragOver={handleDragOver}
                                 onDragLeave={handleDragLeave}
                                 onClick={() => fileInputRef.current?.click()}
                             >
-                                <CloudUpload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                                <p className="text-sm text-gray-600">Drag files here or click to upload</p>
-                                <input ref={fileInputRef} type="file" className="hidden" multiple accept=".pdf,.doc,.docx,.txt" onChange={handleFileSelect} />
+                                <div className="p-4 bg-white dark:bg-slate-800 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-sm border border-gray-100 dark:border-slate-700">
+                                    <CloudUpload className="w-8 h-8 text-blue-600" />
+                                </div>
+                                <p className="text-base text-gray-700 dark:text-slate-300 font-semibold tracking-tight">Drag files here or click to upload</p>
+                                <p className="text-xs text-gray-400 mt-1 uppercase tracking-widest font-bold">Supported Formats: PDF, DOCX</p>
+                                <input ref={fileInputRef} type="file" className="hidden" multiple accept=".pdf,.docx" onChange={handleFileSelect} />
                             </div>
 
                             {uploadedFiles.length > 0 && (
-                                <div className="mt-4 space-y-2">
+                                <div className="mt-6 space-y-2">
                                     {uploadedFiles.map(f => (
-                                        <div key={f.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                                            <div className="flex items-center gap-3">
-                                                <FileText className="h-4 w-4 text-blue-600"/>
+                                        <div key={f.id} className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+                                            <div className="flex items-center gap-4">
+                                                <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600">
+                                                    <FileText className="h-5 w-5"/>
+                                                </div>
                                                 <div className="text-sm">
-                                                    <div className="font-medium">{f.name}</div>
-                                                    <div className="text-xs text-muted-foreground">{formatFileSize(f.size)}</div>
+                                                    <div className="font-bold text-gray-900 dark:text-slate-100 truncate max-w-[500px]">{f.name}</div>
+                                                    <div className="text-xs text-muted-foreground font-medium">{formatFileSize(f.size)}</div>
                                                 </div>
                                             </div>
-                                            <Button variant="ghost" size="sm" onClick={() => removeFile(f.id)}><Trash2 className="h-4 w-4 text-red-500"/></Button>
+                                            <Button variant="ghost" size="sm" className="h-10 w-10 p-0 hover:bg-red-50 hover:text-red-500 rounded-full transition-colors" onClick={() => removeFile(f.id)}>
+                                                <Trash2 className="h-5 w-5"/>
+                                            </Button>
                                         </div>
                                     ))}
                                 </div>
@@ -386,15 +492,15 @@ export function DocumentGame() {
 
                 {/* Step 3 */}
                 {selectedCompetency && (
-                    <div className="flex justify-center pb-8">
+                    <div className="flex justify-center pb-10">
                         <Button 
                             size="lg" 
-                            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:scale-105 transition-transform"
+                            className="bg-[#021E34] hover:bg-[#032E47] dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-xl px-10 h-14 font-bold shadow-lg shadow-blue-500/10 hover:shadow-xl transition-all active:scale-[0.98] gap-3"
                             onClick={handleGenerateReport}
                             disabled={uploadedFiles.length === 0 || generating}
                         >
-                            {generating ? <RefreshCw className="mr-2 h-4 w-4 animate-spin"/> : <CheckCircle2 className="mr-2 h-4 w-4"/>}
-                            {generating ? "Analyzing..." : "Generate Validation Report"}
+                            {generating ? <RefreshCw className="mr-2 h-5 w-5 animate-spin"/> : <Sparkles className="h-5 w-5 text-blue-300"/>}
+                            <span className="text-base font-bold">{generating ? "Analyzing Assessment Data..." : "Generate Validation Report"}</span>
                         </Button>
                     </div>
                 )}
@@ -449,15 +555,28 @@ export function DocumentGame() {
                                             {r.status}
                                         </div>
                                         {r.type === 'validation' && (
-                                            <Button 
-                                                size="sm" 
-                                                variant="outline"
-                                                disabled={r.status !== 'completed' || previewLoadingId === r.id}
-                                                onClick={() => handlePreview(r.id, r.competency_document)}
-                                            >
-                                                {previewLoadingId === r.id ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
-                                                <span className="ml-2 hidden sm:inline">Preview</span>
-                                            </Button>
+                                            <div className="flex gap-2">
+                                                <Button 
+                                                    size="sm" 
+                                                    variant="outline"
+                                                    className="h-8 w-8 p-0 rounded-full"
+                                                    disabled={r.status !== 'completed' || previewLoadingId === r.id}
+                                                    onClick={() => handlePreview(r.id, r.competency_document)}
+                                                    title="Preview Report"
+                                                >
+                                                    {previewLoadingId === r.id ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
+                                                </Button>
+                                                <Button 
+                                                    size="sm" 
+                                                    variant="outline"
+                                                    className="h-8 w-8 p-0 rounded-full border-blue-200 hover:border-blue-400 text-blue-600 hover:bg-blue-50"
+                                                    disabled={r.status !== 'completed' || downloadLoadingId === r.id}
+                                                    onClick={() => handleDirectDownload(r.id, r.competency_document, r.filename)}
+                                                    title="Download Report"
+                                                >
+                                                    {downloadLoadingId === r.id ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                                                </Button>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
@@ -495,13 +614,16 @@ export function DocumentGame() {
                     {previewPdfUrl ? (
                          <iframe 
                             src={previewPdfUrl} 
-                            className="w-full h-full border-none rounded-lg shadow-inner bg-white"
+                            className="w-full h-full border-none rounded-lg shadow-inner bg-white animate-in fade-in duration-500"
                             title="Validation Report Preview"
                          />
                     ) : (
                         <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                            <RefreshCw className="h-8 w-8 animate-spin mb-4" />
-                            <p>Loading preview...</p>
+                            <div className="p-6 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-800 flex flex-col items-center">
+                                <RefreshCw className="h-10 w-10 animate-spin mb-4 text-blue-600" />
+                                <p className="font-bold text-gray-900 dark:text-slate-100">Fetching Report Data</p>
+                                <p className="text-xs text-gray-500 mt-1">This will only take a moment...</p>
+                            </div>
                         </div>
                     )}
                 </div>

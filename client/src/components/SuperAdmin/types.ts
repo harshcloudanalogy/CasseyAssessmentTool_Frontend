@@ -109,3 +109,15 @@ export interface Organization {
     subscription_expiry_date: string | null;
     created_at: string;
 }
+
+export interface AIModelsUpdate {
+    competency_model: string;
+    validation_model: string;
+}
+
+export interface AIModelsResponse {
+    current_competency_model: string;
+    current_validation_model: string;
+    available_models: string[];
+    using_redis: boolean;
+}

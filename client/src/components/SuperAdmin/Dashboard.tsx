@@ -188,7 +188,7 @@ export function Dashboard() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+    <div className="space-y-6 pb-24 animate-in fade-in slide-in-from-bottom-2 duration-300">
       {/* Stats Cards Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         

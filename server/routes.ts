@@ -159,6 +159,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Request Demo route
+  app.post("/api/request-demo", async (req, res) => {
+    try {
+      const { name, email, rtoName } = req.body;
+      if (!name || !email || !rtoName) {
+        return res.status(400).json({ message: "Name, email, and RTO name are required." });
+      }
+      console.log(`[DEMO REQUEST RECEIVED] Name: ${name}, Email: ${email}, RTO Name: ${rtoName}`);
+      res.json({ success: true, message: "Demo request received successfully." });
+    } catch (error) {
+      console.error("Demo request error:", error);
+      res.status(500).json({ message: "Failed to submit demo request." });
+    }
+  });
+  
+  // Competency Unit routes
+  app.get("/api/units/ready_for_validation_report", async (req, res) => {
+    try {
+      const units = await storage.getCompetencyUnits();
+      res.json({ unit_codes: units });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch units" });
+    }
+  });
+
+  app.post("/api/competency-units/add", async (req, res) => {
+    try {
+      const { unit_code } = req.body;
+      if (!unit_code) {
+        return res.status(400).json({ message: "Unit code is required" });
+      }
+      await storage.addCompetencyUnit(unit_code);
+      res.json({ success: true, message: "Unit added successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to add unit" });
+    }
+  });
+
+  app.delete("/api/competency-units/:unitCode", async (req, res) => {
+    try {
+      const { unitCode } = req.params;
+      const success = await storage.deleteCompetencyUnit(unitCode);
+      if (success) {
+        res.json({ success: true, message: "Unit deleted successfully" });
+      } else {
+        res.status(404).json({ success: false, message: "Unit not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Failed to delete unit" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

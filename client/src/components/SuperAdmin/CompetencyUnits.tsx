@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Loader2, FileText, Eye, Download, ArrowRight, X, Trash2 } from "lucide-react";
+import { Loader2, FileText, Eye, Download, ArrowRight, X, Trash2, SearchIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,7 +23,7 @@ import { fetchGeneratedCompetency, deleteCompetencyUnit } from "./api";
 import { parseJwt } from "@/lib/auth";
 
 interface CompetencyUnitsProps {
-    systemUnits: string[];
+    systemUnits: { unit_code: string; unit_name: string }[];
     loadingSystemUnits: boolean;
     loadSystemUnits: () => Promise<void>;
 }
@@ -32,10 +33,17 @@ export function CompetencyUnits({ systemUnits, loadingSystemUnits, loadSystemUni
     const [previewContent, setPreviewContent] = useState<string | null>(null);
     const [loadingPreview, setLoadingPreview] = useState(false);
     const [deletingUnit, setDeletingUnit] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState("");
 
-    // Get user role
+    // Get user role - Allow both SuperAdmin (0) and OrgAdmin (1) to delete
     const token = sessionStorage.getItem("access_token");
-    const isAdmin = token ? parseJwt(token)?.role === 0 : false;
+    const decodedToken = token ? parseJwt(token) : null;
+    const canDelete = decodedToken?.role === 0 || decodedToken?.role === 1;
+
+    const filteredUnits = systemUnits.filter(unit => 
+        unit.unit_code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        unit.unit_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const handleDelete = async (unitCode: string) => {
         try {
@@ -98,53 +106,68 @@ export function CompetencyUnits({ systemUnits, loadingSystemUnits, loadSystemUni
     };
 
     return (
-        <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <div className="pb-24 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            {/* Search Bar */}
+            <div className="mb-6 relative">
+                 <div className="relative group max-w-md">
+                    <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                    <Input 
+                        placeholder="Search units by code or name..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10 h-11 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 rounded-lg shadow-sm"
+                    />
+                 </div>
+            </div>
             {loadingSystemUnits ? (
                 <div className="text-center py-12 text-muted-foreground">
                     <Loader2 className="animate-spin inline mr-2" /> Loading units...
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {systemUnits.map((unit, idx) => (
-                        <div key={idx} className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700 hover:border-blue-500/50 transition flex items-center justify-between group shadow-sm">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-green-500/10 rounded text-green-600">
-                                    <FileText size={18} />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                    {filteredUnits.map((unit, idx) => (
+                        <div key={idx} className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-blue-500/50 transition flex items-center justify-between group shadow-sm">
+                            <div className="flex items-center gap-4 flex-1 min-w-0">
+                                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400 shrink-0">
+                                    <FileText size={20} />
                                 </div>
-                                <span className="font-mono font-medium text-gray-700 dark:text-slate-200">{unit}</span>
+                                <div className="flex flex-col min-w-0">
+                                    <span className="font-mono font-bold text-gray-900 dark:text-slate-100">{unit.unit_code}</span>
+                                    <span className="text-xs text-gray-500 dark:text-slate-400 truncate mt-1" title={unit.unit_name}>{unit.unit_name}</span>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs bg-slate-100 dark:bg-slate-700 text-slate-500 px-2 py-1 rounded">Ready</span>
+                            <div className="flex items-center gap-3">
+                                <span className="text-[10px] uppercase font-bold tracking-wider bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 px-2 py-1 rounded">Ready</span>
                                 <Button 
                                     variant="ghost" 
                                     size="sm" 
-                                    className="h-8 w-8 p-0 text-gray-500 hover:text-blue-600"
-                                    onClick={() => handlePreview(unit)}
+                                    className="h-9 w-9 p-0 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full"
+                                    onClick={() => handlePreview(unit.unit_code)}
                                 >
-                                    <Eye size={16} />
+                                    <Eye size={18} />
                                 </Button>
-                                {isAdmin && (
+                                {canDelete && (
                                     <AlertDialog>
                                         <AlertDialogTrigger asChild>
                                             <Button 
                                                 variant="ghost" 
                                                 size="sm" 
-                                                className="h-8 w-8 p-0 text-gray-400 hover:text-red-500"
-                                                disabled={deletingUnit === unit}
+                                                className="h-9 w-9 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full"
+                                                disabled={deletingUnit === unit.unit_code}
                                             >
-                                                {deletingUnit === unit ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                                                {deletingUnit === unit.unit_code ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
                                             </Button>
                                         </AlertDialogTrigger>
                                         <AlertDialogContent>
                                             <AlertDialogHeader>
                                                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                                 <AlertDialogDescription>
-                                                    This action will permanently delete the competency unit <strong>{unit}</strong> and its associated data from the system.
+                                                    This action will permanently delete the competency unit <strong>{unit.unit_code}</strong> and its associated data from the system.
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
                                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                <AlertDialogAction onClick={() => handleDelete(unit)} className="bg-red-600 hover:bg-red-700">
+                                                <AlertDialogAction onClick={() => handleDelete(unit.unit_code)} className="bg-red-600 hover:bg-red-700">
                                                     Delete
                                                 </AlertDialogAction>
                                             </AlertDialogFooter>
@@ -154,9 +177,9 @@ export function CompetencyUnits({ systemUnits, loadingSystemUnits, loadSystemUni
                             </div>
                         </div>
                     ))}
-                    {systemUnits.length === 0 && (
-                        <div className="col-span-3 text-center py-10 text-muted-foreground">
-                            No units found in the system. Use "Add New Unit" to fetch one.
+                    {filteredUnits.length === 0 && (
+                        <div className="col-span-2 text-center py-10 text-muted-foreground border border-dashed border-gray-200 dark:border-slate-800 rounded-xl">
+                            {searchQuery ? "No units match your search query." : "No units found in the system. Use \"Add New Unit\" to fetch one."}
                         </div>
                     )}
                 </div>

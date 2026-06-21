@@ -5,10 +5,10 @@ export const getAuthToken = () => {
 export const API_BASE = import.meta.env.VITE_API_BASE_URL;
 export const HEADERS_NGROK = { "ngrok-skip-browser-warning": "true" };
 
-export async function searchUnitCodes(prefix: string, limit: string = "5") {
+export async function searchUnitCodes(query: string, limit: string = "5") {
     const token = getAuthToken();
     const form = new URLSearchParams();
-    form.append("prefix", prefix);
+    form.append("query", query);
     form.append("limit", limit);
 
     const res = await fetch(`${API_BASE}/unit-codes/search`, {
@@ -39,21 +39,6 @@ export async function fetchUnitsForReports() {
     });
 
     if (!res.ok) throw new Error("Failed to fetch units");
-    return res.json();
-}
-
-
-export async function addCompetencyUnit(unitCode: string) {
-    const token = getAuthToken();
-    const res = await fetch(`${API_BASE}/competency-units/add`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token.replace(/^Bearer\s*/i, "")}`,
-            ...HEADERS_NGROK
-        },
-        body: JSON.stringify({ unit_code: unitCode })
-    });
     return res.json();
 }
 
@@ -273,5 +258,83 @@ export async function fetchSubscriptionDetails() {
         const txt = await res.text();
         throw new Error(`fetchSubscriptionDetails failed: ${res.status} ${txt}`);
     }
+    return res.json();
+}
+
+// Admin Settings APIs
+export async function addAndUpdateTrainingPackage() {
+    const token = getAuthToken();
+    const res = await fetch(`${API_BASE}/addandupdate_trainingpackage`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token.replace(/^Bearer\s*/i, "")}`,
+            ...HEADERS_NGROK
+        },
+    });
+    return res.json();
+}
+
+export async function addAndUpdateCompetencyUnits() {
+    const token = getAuthToken();
+    const res = await fetch(`${API_BASE}/addandupdate_competencyunits`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token.replace(/^Bearer\s*/i, "")}`,
+            ...HEADERS_NGROK
+        },
+    });
+    return res.json();
+}
+
+export async function linkCompetencyUnits() {
+    const token = getAuthToken();
+    const res = await fetch(`${API_BASE}/link_competency_units`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token.replace(/^Bearer\s*/i, "")}`,
+            ...HEADERS_NGROK
+        },
+    });
+    return res.json();
+}
+
+export async function fetchAIModels() {
+    const token = getAuthToken();
+    const res = await fetch(`${API_BASE}/admin/ai-models`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token.replace(/^Bearer\s*/i, "")}`,
+            ...HEADERS_NGROK
+        },
+    });
+    return res.json();
+}
+
+export async function updateAIModels(competencyModel: string, validationModel: string) {
+    const token = getAuthToken();
+    const res = await fetch(`${API_BASE}/admin/update-ai-models`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token.replace(/^Bearer\s*/i, "")}`,
+            ...HEADERS_NGROK
+        },
+        body: JSON.stringify({
+            competency_model: competencyModel,
+            validation_model: validationModel
+        }),
+    });
+    return res.json();
+}
+
+export async function fetchScraperStatus() {
+    const token = getAuthToken();
+    const res = await fetch(`${API_BASE}/admin/scraper-status`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token.replace(/^Bearer\s*/i, "")}`,
+            ...HEADERS_NGROK
+        },
+    });
     return res.json();
 }

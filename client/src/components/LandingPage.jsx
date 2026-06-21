@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { Upload, Search, BarChart3, CheckCircle2, Play, ArrowRight, Brain, FileCheck, Zap, Shield, ChevronLeft, ChevronRight, FileText } from "lucide-react";
+import { Upload, Search, BarChart3, CheckCircle2, Play, ArrowRight, Brain, FileCheck, Zap, Shield, ChevronLeft, ChevronRight, FileText, Hourglass, Rocket, TrendingDown, Users, AlertTriangle, Lock, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 import logo from "./assets/Small 1.png";
 
@@ -131,8 +132,8 @@ const ImageSlider = () => {
   const effectiveTranslate = `translateX(calc(${translatePercent}% + ${dragX}px))`;
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto" ref={containerRef}>
-      <div className="relative overflow-hidden rounded-xl shadow-xl border border-gray-200 bg-white">
+    <div className="relative w-full max-w-6xl mx-auto" ref={containerRef}>
+      <div className="relative overflow-hidden rounded-2xl shadow-2xl border border-gray-100 bg-white/50 backdrop-blur-md">
         <div
           ref={slidesRef}
           onWheel={onWheel}
@@ -145,11 +146,11 @@ const ImageSlider = () => {
         >
           {slides.map((slide, index) => (
             <div key={index} className="min-w-full relative">
-              <div className="aspect-[16/10] relative bg-gray-50">
+              <div className="aspect-[16/9] relative bg-transparent flex items-center justify-center p-6">
                 <img
                   src={slide.url}
                   alt={slide.title}
-                  className="w-full h-full object-contain p-1"
+                  className="max-w-full max-h-full object-contain rounded-xl shadow-lg border border-gray-100 bg-white"
                   draggable={false}
                 />
               </div>
@@ -192,8 +193,60 @@ const ImageSlider = () => {
 };
 
 export default function LandingPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [scrollY, setScrollY] = useState(0);
+
+  // Demo Modal Form states
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
+  const [demoName, setDemoName] = useState("");
+  const [demoEmail, setDemoEmail] = useState("");
+  const [demoRto, setDemoRto] = useState("");
+  const [isSubmittingDemo, setIsSubmittingDemo] = useState(false);
+
+  const handleDemoSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmittingDemo(true);
+    try {
+      const response = await fetch("/api/request-demo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: demoName,
+          email: demoEmail,
+          rtoName: demoRto,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        toast({
+          title: "Demo Request Submitted",
+          description: "Thank you! We have received your demo request and will email you shortly.",
+        });
+        setIsDemoModalOpen(false);
+        setDemoName("");
+        setDemoEmail("");
+        setDemoRto("");
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Submission Failed",
+          description: data.message || "Something went wrong. Please try again.",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error occurred",
+        description: "Could not connect to the server. Please try again later.",
+      });
+    } finally {
+      setIsSubmittingDemo(false);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -417,6 +470,14 @@ export default function LandingPage() {
                 >
                   Org Signup
                 </button>
+
+                {/* Try Free Validation Button */}
+                <button
+                  onClick={() => navigate('/signup')}
+                  className="px-6 py-2 font-bold text-white bg-[#00cfa7] hover:bg-[#00bda0] rounded-full hover:shadow-lg hover:shadow-emerald-400/40 transition-all duration-300 transform hover:scale-105 flex items-center"
+                >
+                  Try free validation ↗
+                </button>
               </div>
             </div>
           </div>
@@ -556,16 +617,12 @@ export default function LandingPage() {
 
               {/* Subheading */}
               <h2 className="text-2xl lg:text-4xl font-bold text-[#032E47] mb-6 leading-tight">
-                AI-Driven Assessment<br />
-                <span className="text-[#032E47]">Validation Platform</span>
+                Your compliance team just got a head start
               </h2>
 
               {/* Description */}
               <p className="text-lg text-gray-700 mb-10 max-w-xl leading-relaxed">
-                EduValidate is an AI-powered pre-assessment validation tool that
-independently maps your assessment tools against training package
-requirements and provides structured, evidence-based advice
-—before your audit does.
+                EduValidate is an AI-powered pre-assessment validation tool that independently reviews and maps your assessment tools against the training package requirements, Principles of Assessment and Rules of Evidence and provides structured, evidence-based advice- designed by an experienced regulatory auditor.
               </p>
 
               {/* Stats */}
@@ -593,20 +650,13 @@ requirements and provides structured, evidence-based advice
               {/* CTA Buttons */}
               <div className="flex flex-row items-center gap-6">
                 <button
-                  onClick={() => navigate('/signup')}
-                  className="relative group px-8 py-3 font-bold text-lg text-white bg-gradient-to-r from-[#021B30] to-[#032E47] rounded-lg hover:shadow-xl hover:shadow-blue-400/50 transition-all duration-300 transform hover:scale-105"
+                  onClick={() => setIsDemoModalOpen(true)}
+                  className="relative group px-8 py-4 font-bold text-lg text-white bg-[#00cfa7] hover:bg-[#00bda0] rounded-lg hover:shadow-xl hover:shadow-emerald-400/40 transition-all duration-300 transform hover:scale-105"
                 >
                   <span className="relative flex items-center">
-                    Get Started
+                    Request your demo
                     <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
                   </span>
-                </button>
-                
-                <button
-                  onClick={() => navigate('/signup')}
-                  className="px-8 py-3 font-bold text-lg text-[#021B30] hover:text-[#032E47] transition-colors"
-                >
-                  Learn More
                 </button>
               </div>
             </div>
@@ -644,27 +694,8 @@ requirements and provides structured, evidence-based advice
         </div>
       </section>
 
-      {/* Upload. Validate. Improve. Section - Enhanced */}
+      {/* Your Validation workflow Section */}
       <section className="py-24 bg-gradient-to-b from-white via-blue-50 to-white relative overflow-hidden">
-        <style jsx>{`
-          @keyframes slide-up {
-            0% { opacity: 0; transform: translateY(40px); }
-            100% { opacity: 1; transform: translateY(0); }
-          }
-          @keyframes shimmer-border {
-            0%, 100% { border-color: #021B30; }
-            50% { border-color: #032E47; }
-          }
-          .step-card {
-            animation: slide-up 0.6s ease-out forwards;
-            opacity: 0;
-          }
-          .step-card:nth-child(1) { animation-delay: 0.1s; }
-          .step-card:nth-child(2) { animation-delay: 0.2s; }
-          .step-card:nth-child(3) { animation-delay: 0.3s; }
-          .step-card:nth-child(4) { animation-delay: 0.4s; }
-        `}</style>
-
         {/* Background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-200 to-cyan-100 rounded-full blur-3xl opacity-10"></div>
@@ -673,64 +704,81 @@ requirements and provides structured, evidence-based advice
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-20">
-            <div className="inline-flex items-center bg-gradient-to-r from-blue-100 to-cyan-100 border-2 border-[#021B30] rounded-full px-6 py-3 mb-8 backdrop-blur-sm">
-              <Zap className="w-5 h-5 text-[#021B30] mr-3 animate-pulse" />
-              <span className="text-[#021B30] font-bold">Smart Document Processing</span>
-            </div>
             <h2 className="text-5xl lg:text-6xl font-black text-[#021B30] mb-6">
-              Upload. Validate. Improve.
+              Your Validation workflow
             </h2>
-            <p className="text-xl text-gray-700 max-w-2xl mx-auto">
-              Our intelligent four-step process transforms assessment validation from weeks to minutes
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {[
               {
-                number: "1",
-                title: "Log in to your dashboard",
-                description: "Access your validation history and upload options.",
+                number: "Step 1",
+                text: "Upload your Assessment documents",
+                actor: "RTO team",
+                icon: Upload
               },
               {
-                number: "2",
-                title: "Upload your assessment tools",
-                description: "Submit documents for AI analysis of competency standards.",
+                number: "Step 2",
+                text: "EduValidate analyses against multiple audit tests designed by an auditor",
+                actor: "EduValidate",
+                icon: Search
               },
               {
-                number: "3",
-                title: "EduValidate maps your tool",
-                description: "AI reviews your tool against compliance and standards.",
+                number: "Step 3",
+                text: "EduValidate delivers a report with gaps identified risks and recommendations for improvement",
+                actor: "EduValidate",
+                icon: FileText
               },
               {
-                number: "4",
-                title: "Receive your Validation Report",
-                description: "Get detailed PDF with compliance report and recommendations.",
+                number: "Step 4",
+                text: "The RTO team (compliance, trainers assessors etc) evaluates the findings and decides on actions",
+                actor: "RTO team",
+                icon: Users
               },
-            ].map((step, index) => (
-              <div
-                key={index}
-                className="step-card relative group"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-[#021B30]/5 to-[#032E47]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative border-2 border-[#021B30]/30 rounded-2xl p-8 bg-white/50 backdrop-blur-sm hover:border-[#021B30] transition-all duration-300 h-full">
-                  <div className="text-6xl font-black bg-gradient-to-r from-[#021B30] to-[#032E47] bg-clip-text text-transparent mb-6">
-                    {step.number}
-                  </div>
-                  <h3 className="font-bold text-gray-900 mb-4 text-lg">
-                    {step.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {step.description}
-                  </p>
+              {
+                number: "Step 5",
+                text: "The assessment is approved by the RTO for implementation",
+                actor: "RTO team",
+                icon: CheckCircle2
+              }
+            ].map((step, index) => {
+              const IconComponent = step.icon;
+              return (
+                <div
+                  key={index}
+                  className="relative group flex flex-col justify-between border-2 border-[#021B30]/20 rounded-2xl p-6 bg-white hover:border-[#021B30] hover:shadow-xl transition-all duration-300 h-full"
+                >
+                  <div>
+                    {/* Top: Step Indicator */}
+                    <div className="text-sm font-black text-gray-400 uppercase tracking-wider mb-2">
+                      {step.number}
+                    </div>
 
-                  {/* Connection line to next card */}
-                  {index < 3 && (
-                    <div className="hidden lg:block absolute -right-6 top-1/2 w-12 h-0.5 bg-gradient-to-r from-[#021B30] to-transparent transform -translate-y-1/2"></div>
+                    {/* Step Title/Description */}
+                    <p className="font-bold text-gray-900 leading-snug mb-6 text-[15px]">
+                      {step.text}
+                    </p>
+                  </div>
+
+                  <div>
+                    {/* Icon Container */}
+                    <div className="w-12 h-12 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center mb-6 text-[#021B30] group-hover:bg-[#021B30] group-hover:text-white transition-colors duration-300">
+                      <IconComponent className="w-6 h-6" />
+                    </div>
+
+                    {/* Responsibility Label */}
+                    <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-200">
+                      {step.actor}
+                    </div>
+                  </div>
+
+                  {/* Horizontal Arrow Line for Large screens (only for steps 1-4) */}
+                  {index < 4 && (
+                    <div className="hidden lg:block absolute -right-4 top-[35%] w-8 h-0.5 bg-gray-200 z-20"></div>
                   )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -824,53 +872,203 @@ requirements and provides structured, evidence-based advice
       </section>
 
       {/* Audit Tests Section with Image Slider */}
-      <section className="py-24 bg-gradient-to-br from-white via-cyan-50 to-white relative overflow-hidden">
-        <style jsx>{`
-          @keyframes slide-in-left {
-            0% { opacity: 0; transform: translateX(-50px); }
-            100% { opacity: 1; transform: translateX(0); }
-          }
-          @keyframes slide-in-right {
-            0% { opacity: 0; transform: translateX(50px); }
-            100% { opacity: 1; transform: translateX(0); }
-          }
-
-          .audit-title {
-            animation: slide-in-left 0.8s ease-out;
-          }
-          .audit-description {
-            animation: slide-in-right 0.8s ease-out 0.2s both;
-          }
-        `}</style>
-
+      <section className="py-14 bg-gradient-to-br from-white via-cyan-50 to-white relative overflow-hidden">
         {/* Background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-cyan-300 to-blue-200 rounded-full blur-3xl opacity-10"></div>
           <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-gradient-to-tr from-blue-200 to-cyan-100 rounded-full blur-3xl opacity-10"></div>
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center bg-gradient-to-r from-cyan-100 to-blue-100 border-2 border-[#021B30] rounded-full px-6 py-3 mb-8 backdrop-blur-sm">
-              <FileCheck className="w-5 h-5 text-[#021B30] mr-3 animate-pulse" />
-              <span className="text-[#021B30] font-bold">Audit-Grade Verification</span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            {/* Left Column: Heading and Description */}
+            <div className="lg:col-span-5 text-left">
+              <h2 className="text-4xl lg:text-5xl font-black text-[#021B30] mb-6 leading-tight">
+                See what an auditor would find in your assessments
+              </h2>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                Upload your assessment and receive a structured validation report identifying compliance risks, evidence gaps and quality issues before audit.
+              </p>
             </div>
 
-            <h2 className="audit-title text-5xl lg:text-6xl font-black text-[#021B30] mb-6">
-              AI-Powered Audit Tests
-            </h2>
-            <p className="audit-description text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto">
-              EduValidate isn’t about ticking boxes — it’s about transforming validation into a genuine quality improvement
-process. Our AI doesn’t just check if your assessments meet the standards; it puts them through a series of
-audit-style tests built by a compliance expert. You get a practical, easy-to-read report with recommendations you
-
-can actually use to improve your tools and training outcomes.
-            </p>
+            {/* Right Column: Image Slider */}
+            <div className="lg:col-span-7">
+              <div className="rounded-3xl overflow-hidden shadow-2xl shadow-blue-200/50">
+                <ImageSlider />
+              </div>
+            </div>
           </div>
+        </div>
+      </section>
 
-          {/* Image Slider */}
-          <div className="rounded-3xl overflow-hidden shadow-2xl shadow-blue-200/50">
-            <ImageSlider />
+      {/* Find the issues before audit does Section */}
+      <section className="py-24 bg-gradient-to-b from-white to-blue-50/30 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            {/* Left Column: Title and Blurb */}
+            <div className="lg:col-span-5 text-left">
+              <h2 className="text-4xl lg:text-5xl font-black text-[#021B30] mb-6 leading-tight">
+                Find the issues before audit does
+              </h2>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                EduValidate makes assessment risk visible early, giving your team the opportunity to improve quality before learners commence.
+              </p>
+            </div>
+
+            {/* Right Column: Stacked Risk Cards */}
+            <div className="lg:col-span-7 space-y-4">
+              {[
+                "Missing or weak performance evidence tasks",
+                "Misalignment between knowledge evidence and assessment tasks",
+                "Unclear assessment instructions that may affect evidence quality",
+                "Assessment conditions that do not reflect unit requirements",
+                "Language, accessibility barriers for learners"
+              ].map((risk, index) => (
+                <div 
+                  key={index}
+                  className="flex items-center gap-4 bg-white border border-gray-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300 animate-in fade-in slide-in-from-bottom-3"
+                  style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'both' }}
+                >
+                  <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 flex-shrink-0">
+                    <AlertTriangle className="w-5 h-5" />
+                  </div>
+                  <p className="font-semibold text-gray-800 text-base">{risk}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Validate before delivery & Non-compliance Section */}
+      <section className="py-24 bg-[#021B30] text-white relative overflow-hidden">
+        {/* Background Accents */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-cyan-400 to-blue-500 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-tr from-purple-400 to-blue-500 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
+
+        {/* Part 1: Validate before delivery */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center mb-20">
+          <h2 className="text-4xl lg:text-5xl font-black text-white mb-6">
+            Validate before delivery
+          </h2>
+          <p className="text-lg lg:text-xl text-blue-100/90 mb-10 max-w-2xl mx-auto leading-relaxed">
+            See how EduValidate strengthens assessment quality, reduces compliance risk and supports confident governance in your RTO.
+          </p>
+          <button
+            onClick={() => setIsDemoModalOpen(true)}
+            className="px-10 py-4 bg-[#00cfa7] hover:bg-[#00bda0] text-white rounded-xl font-black text-lg hover:shadow-2xl hover:shadow-emerald-400/40 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 mx-auto"
+          >
+            Request your demo &rarr;
+          </button>
+        </div>
+
+        {/* Part 2: Non-compliance isn't just an audit problem */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            
+            {/* Left Column: Heading, Blurb and the 3 text cards */}
+            <div className="lg:col-span-5 flex flex-col justify-start text-left space-y-8">
+              <div>
+                <h2 className="text-4xl lg:text-5xl font-black mb-6 leading-tight">
+                  Non-compliance isn't just an audit problem.
+                </h2>
+                <p className="text-lg text-blue-100/80 leading-relaxed">
+                  For Australian RTOs, a single ASQA non-compliance finding triggers a cascade of consequences — most of which cost far more than prevention.
+                </p>
+              </div>
+
+              {/* Text cards vertical stack */}
+              <div className="space-y-4 w-full">
+                {/* Card 1: Re-registration delays */}
+                <div className="bg-[#032E47]/60 border border-blue-900/30 rounded-2xl p-6 hover:border-blue-700/50 transition-all duration-300">
+                  <div className="flex gap-4 items-start">
+                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-cyan-400 flex-shrink-0">
+                      <Hourglass className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg text-white mb-2">Re-registration delays</h4>
+                      <p className="text-sm text-blue-100/70 leading-relaxed">
+                        Non-compliant RTOs face conditions, additional audits, and re-registration delays that can run 6–18 months.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card 5: Remediation costs */}
+                <div className="bg-[#032E47]/60 border border-blue-900/30 rounded-2xl p-6 hover:border-blue-700/50 transition-all duration-300">
+                  <div className="flex gap-4 items-start">
+                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-cyan-400 flex-shrink-0">
+                      <Rocket className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg text-white mb-2">Remediation costs</h4>
+                      <p className="text-sm text-blue-100/70 leading-relaxed">
+                        Emergency consultant engagement, resource rewrites, and assessor retraining after a finding typically exceeds your annual EduValidate subscription many times over.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card 6: Reputational damage */}
+                <div className="bg-[#032E47]/60 border border-blue-900/30 rounded-2xl p-6 hover:border-blue-700/50 transition-all duration-300">
+                  <div className="flex gap-4 items-start">
+                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-cyan-400 flex-shrink-0">
+                      <TrendingDown className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg text-white mb-2">Reputational damage</h4>
+                      <p className="text-sm text-blue-100/70 leading-relaxed">
+                        ASQA publishes compliance outcomes. Students, employers, and funding bodies check. One finding affects enrolment pipelines for years.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: 3 stats cards side-by-side (vertical stack on small screens, 3 cols on large) */}
+            <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-3 gap-4 items-start lg:pt-16">
+              {/* Card 2: 47% */}
+              <div className="bg-[#032E47]/40 border border-blue-900/20 rounded-2xl p-5 hover:border-blue-700/30 transition-all duration-300 flex flex-col gap-6">
+                <div>
+                  <div className="text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-black text-cyan-400 mb-3">47%</div>
+                  <p className="text-sm text-blue-100/80 leading-relaxed mb-0">
+                    of RTOs found non-compliant on trainer/assessor credentials in ASQA audits
+                  </p>
+                </div>
+                <div className="text-xs text-blue-100/40 uppercase tracking-wider font-semibold">
+                  SOURCE: ASQA ANNUAL REPORT
+                </div>
+              </div>
+
+              {/* Card 3: 2yrs */}
+              <div className="bg-[#032E47]/40 border border-blue-900/20 rounded-2xl p-5 hover:border-blue-700/30 transition-all duration-300 flex flex-col gap-6">
+                <div>
+                  <div className="text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-black text-cyan-400 mb-3">2yrs</div>
+                  <p className="text-sm text-blue-100/80 leading-relaxed mb-0">
+                    Assessment evidence must now be retained under the 2025 Standards
+                  </p>
+                </div>
+                <div className="text-xs text-blue-100/40 uppercase tracking-wider font-semibold">
+                  STANDARDS FOR RTOs 2025
+                </div>
+              </div>
+
+              {/* Card 4: <10min */}
+              <div className="bg-[#032E47]/40 border border-blue-900/20 rounded-2xl p-5 hover:border-blue-700/30 transition-all duration-300 flex flex-col gap-6 text-center">
+                <div>
+                  <div className="text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-black text-cyan-400 mb-3 whitespace-nowrap">&lt;10min</div>
+                  <p className="text-sm text-blue-100/80 leading-relaxed mb-0">
+                    Time for EduValidate to generate your full compliance report
+                  </p>
+                </div>
+                <div className="text-xs text-blue-100/40 uppercase tracking-wider font-semibold">
+                  EDUVALIDATE PLATFORM
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -882,10 +1080,6 @@ can actually use to improve your tools and training outcomes.
             0% { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
           }
-          @keyframes popular-pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(2, 27, 48, 0.3); }
-            50% { box-shadow: 0 0 0 15px rgba(2, 27, 48, 0); }
-          }
 
           .price-card {
             animation: price-pop 0.6s ease-out forwards;
@@ -896,7 +1090,7 @@ can actually use to improve your tools and training outcomes.
           .price-card:nth-child(3) { animation-delay: 0.3s; }
 
           .popular-card {
-            animation: popular-pulse 2s infinite;
+            animation: price-pop 0.6s 0.2s ease-out forwards;
           }
         `}</style>
 
@@ -913,10 +1107,11 @@ can actually use to improve your tools and training outcomes.
               <span className="text-[#021B30] font-bold">Transparent Pricing</span>
             </div>
             <h2 className="text-5xl lg:text-6xl font-black text-[#021B30] mb-6">
-              One Annual Membership. Unlimited Confidence.
+              One annual membership.<br />
+              <span className="text-[#021B30]">Unlimited Confidence</span>
             </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Full access to validation tools, AI analysis, and downloadable audit-ready reports
+            <p className="text-xl text-gray-700 font-semibold max-w-3xl mx-auto">
+              Each unit of competency = 1 validation credit
             </p>
           </div>
 
@@ -925,41 +1120,20 @@ can actually use to improve your tools and training outcomes.
             {[
               {
                 name: "Lite",
-                units: "10 validations",
-                price: "$6,000",
-                features: [
-                  "10 annual validations",
-                  "Basic reporting",
-                  "Email support",
-                  "Standard turnaround"
-                ],
+                units: "15 credits",
+                price: "$8,000.00",
                 popular: false
               },
               {
                 name: "Pro",
-                units: "25 validations",
-                price: "$15,000",
-                features: [
-                  "25 annual validations",
-                  "Advanced reporting",
-                  "Priority support",
-                  "Fast turnaround",
-                  "Custom insights"
-                ],
-                popular: false
+                units: "40 credits",
+                price: "$15,000.00",
+                popular: true
               },
               {
                 name: "Premium",
-                units: "Unlimited validations",
-                price: "$22,000",
-                features: [
-                  "Unlimited validations",
-                  "Premium reporting",
-                  "24/7 dedicated support",
-                  "Instant turnaround",
-                  "Custom consulting",
-                  "API access"
-                ],
+                units: "75 credits",
+                price: "$22,000.00",
                 popular: false
               }
             ].map((plan, index) => (
@@ -970,51 +1144,40 @@ can actually use to improve your tools and training outcomes.
                 {plan.popular && (
                   <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 z-10">
                     <span className="bg-gradient-to-r from-[#021B30] to-[#032E47] text-white px-6 py-2 rounded-full text-sm font-black shadow-lg">
-                      MOST POPULAR
+                      Most Popular
                     </span>
                   </div>
                 )}
 
-                <div className={`relative rounded-3xl p-10 transition-all duration-300 h-full ${
+                <div className={`relative rounded-3xl p-10 transition-all duration-300 h-full flex flex-col justify-between ${
                   plan.popular
                     ? 'bg-gradient-to-br from-[#021B30] to-[#032E47] text-white shadow-2xl shadow-blue-400/50 md:scale-105 md:-mt-6 z-30'
                     : 'bg-white border-2 border-[#021B30]/20 hover:border-[#021B30] group-hover:shadow-2xl group-hover:shadow-blue-200/50'
                 }`}>
-                  <h3 className={`text-3xl font-black mb-3 ${plan.popular ? 'text-white' : 'text-[#021B30]'}`}>
-                    {plan.name}
-                  </h3>
-                  <p className={`text-sm font-semibold mb-8 ${plan.popular ? 'text-white/80' : 'text-gray-600'}`}>
-                    {plan.units}
-                  </p>
+                  <div>
+                    <h3 className={`text-3xl font-black mb-3 ${plan.popular ? 'text-white' : 'text-[#021B30]'}`}>
+                      {plan.name}
+                    </h3>
+                    <p className={`text-sm font-semibold mb-8 ${plan.popular ? 'text-white/80' : 'text-gray-600'}`}>
+                      {plan.units}
+                    </p>
 
-                  <div className="mb-10">
-                    <span className={`text-5xl font-black ${plan.popular ? 'text-white' : 'text-[#021B30]'}`}>
-                      {plan.price}
-                    </span>
-                    <span className={`text-sm font-semibold ${plan.popular ? 'text-white/70' : 'text-gray-600'}`}>
-                      /year
-                    </span>
+                    <div className="mb-10">
+                      <span className={`text-4xl lg:text-[2.5rem] font-black ${plan.popular ? 'text-white' : 'text-[#021B30]'}`}>
+                        {plan.price}
+                      </span>
+                      <span className={`text-sm font-semibold ${plan.popular ? 'text-white/70' : 'text-gray-600'}`}>
+                        /year
+                      </span>
+                    </div>
                   </div>
 
                   <button
                     onClick={() => navigate('/signup')}
-                    className={`w-full mb-10 px-6 py-4 rounded-xl font-black text-lg transition-all duration-300 transform hover:scale-105 ${
-                      plan.popular
-                        ? 'bg-white text-[#021B30] hover:shadow-xl hover:shadow-white/50'
-                        : 'bg-gradient-to-r from-[#021B30] to-[#032E47] text-white hover:shadow-lg hover:shadow-blue-400/50'
-                    }`}
+                    className="w-full px-6 py-4 bg-[#00cfa7] hover:bg-[#00bda0] rounded-full text-white font-bold text-base transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-emerald-400/40 mt-6"
                   >
-                    Get Started
+                    Get started
                   </button>
-
-                  <div className={`space-y-4 ${plan.popular ? 'text-white/90' : 'text-gray-700'}`}>
-                    {plan.features.map((feature, i) => (
-                      <div key={i} className="flex items-start gap-3">
-                        <CheckCircle2 className={`w-6 h-6 flex-shrink-0 mt-0.5 ${plan.popular ? 'text-white' : 'text-green-600'}`} />
-                        <span className="font-medium">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
             ))}
@@ -1024,6 +1187,74 @@ can actually use to improve your tools and training outcomes.
             <p className="text-gray-700 text-lg">
               Need a custom plan? <a href="#" className="text-[#021B30] font-bold hover:text-[#032E47] transition-colors underline">Contact Now</a>
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Privacy and Data Security Section */}
+      <section className="py-24 bg-gradient-to-b from-white via-cyan-50/20 to-white relative overflow-hidden">
+        {/* Background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-gradient-to-br from-cyan-200/20 to-blue-200/20 rounded-full blur-3xl opacity-10"></div>
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-gradient-to-tl from-teal-100/20 to-cyan-100/20 rounded-full blur-3xl opacity-10"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            {/* Left Column: Info */}
+            <div className="lg:col-span-5 text-left flex flex-col justify-center">
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-cyan-50 border border-cyan-100 text-cyan-600 text-xs font-black uppercase tracking-wider mb-6 w-fit">
+                PRIVACY AND DATA SECURITY
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-black text-[#021B30] mb-6 leading-tight">
+                Your data stays yours. And stays in Australia.
+              </h2>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                RTOs upload sensitive institutional documents. We've built EduValidate's data practices around the Privacy Act, the 2025 Standards record-keeping requirements, and the AI guardrail on information security.
+              </p>
+            </div>
+
+            {/* Right Column: 3 Glassmorphic Cards */}
+            <div className="lg:col-span-7 space-y-6">
+              {/* Card 1: Australian data sovereignty */}
+              <div className="bg-white/60 backdrop-blur-md border border-[#021B30]/10 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-[#021B30]/30 transition-all duration-300 flex gap-5 items-start">
+                <div className="w-12 h-12 rounded-xl bg-cyan-50 border border-cyan-100 flex items-center justify-center flex-shrink-0 text-[#021B30] font-black text-sm">
+                  AU
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg text-gray-900 mb-2">Australian data sovereignty</h4>
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    All uploaded documents and reports are stored on Australian-based servers only. Your data never leaves Australia.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 2: Not used to train AI models */}
+              <div className="bg-white/60 backdrop-blur-md border border-[#021B30]/10 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-[#021B30]/30 transition-all duration-300 flex gap-5 items-start">
+                <div className="w-12 h-12 rounded-xl bg-cyan-50 border border-cyan-100 flex items-center justify-center flex-shrink-0 text-cyan-600">
+                  <Lock className="w-6 h-6 text-[#021B30]" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg text-gray-900 mb-2">Not used to train AI models</h4>
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    Your uploaded assessment tools are never used to train our AI model. Your intellectual property stays yours, always.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 3: Right to deletion */}
+              <div className="bg-white/60 backdrop-blur-md border border-[#021B30]/10 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-[#021B30]/30 transition-all duration-300 flex gap-5 items-start">
+                <div className="w-12 h-12 rounded-xl bg-cyan-50 border border-cyan-100 flex items-center justify-center flex-shrink-0 text-cyan-600">
+                  <Trash className="w-6 h-6 text-[#021B30]" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg text-gray-900 mb-2">Right to deletion</h4>
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    Cancel at any time. All your data is deleted within 30 days of cancellation on request.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -1071,43 +1302,133 @@ can actually use to improve your tools and training outcomes.
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-purple-400 to-blue-500 rounded-full blur-3xl opacity-10"></div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="inline-flex items-center bg-white/10 backdrop-blur-md border-2 border-white/30 rounded-full px-6 py-3 mb-10 hover:bg-white/20 transition-colors duration-300">
+          <div className="inline-flex items-center bg-cyan-950/40 backdrop-blur-md border border-cyan-500/30 rounded-full px-6 py-3 mb-10 text-cyan-400 font-bold uppercase tracking-wider text-sm">
             <div className="w-2 h-2 bg-cyan-400 rounded-full mr-3 animate-pulse"></div>
-            <span className="text-white font-bold">Ready to Transform Your Assessments?</span>
+            GET STARTED TODAY
           </div>
 
-          <h2 className="text-5xl lg:text-7xl font-black text-white mb-8 leading-tight">
-            Join the Future of<br />
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Assessment Validation</span>
+          <h2 className="text-4xl lg:text-6xl font-black text-white mb-8 leading-tight">
+            Reduce compliance risk through<br className="hidden md:inline" /> structured quality assurance
           </h2>
 
-          <p className="text-xl lg:text-2xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Thousands of Australian training providers trust EduValidate's AI for faster,
-            more accurate compliance validation with instant actionable insights.
+          <p className="text-lg lg:text-xl text-white/95 mb-12 max-w-3xl mx-auto leading-relaxed">
+            Try EduValidate free with one complete validation — no credit card, no commitment. See exactly what your assessors will see before your auditor does.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <div className="flex justify-center">
             <button
-              onClick={() => navigate('/signup')}
-              className="cta-button px-10 py-4 bg-white text-[#021B30] rounded-xl font-black text-lg hover:shadow-2xl hover:shadow-white/50 transition-all duration-300 transform hover:scale-110 flex items-center gap-2"
+              onClick={() => setIsDemoModalOpen(true)}
+              className="px-10 py-4 bg-[#00cfa7] hover:bg-[#00bda0] rounded-full text-white font-bold text-base transition-all duration-300 transform hover:scale-110 flex items-center gap-2 hover:shadow-xl hover:shadow-emerald-400/40"
             >
-              Start Now
-              <ArrowRight className="w-5 h-5" />
+              Try a free validation ↗
             </button>
-
-            {/* <button
-              onClick={handleGetStarted}
-              className="px-10 py-4 border-2 border-white text-white rounded-xl font-bold text-lg hover:bg-white/10 transition-all duration-300"
-            >
-              Watch Demo
-            </button> */}
           </div>
-
-          <p className="text-white/60 text-sm mt-10">
-            Driving Innovation in Assessment Validation
-          </p>
         </div>
       </section>
+
+      {/* Footer Section */}
+      <footer className="bg-[#021B30] text-gray-400 py-16 border-t border-white/10 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
+            {/* Logo */}
+            <div className="flex items-center gap-2 text-xl font-bold text-white">
+              <span className="text-[#00cfa7] text-2xl">•</span>
+              EduValidate
+            </div>
+            {/* Links */}
+            <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm font-semibold text-gray-400">
+              <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link to="/ai-transparency" className="hover:text-white transition-colors">AI Transparency Statement</Link>
+              <Link to="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
+              <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
+            </div>
+          </div>
+
+          <div className="text-sm text-gray-500 mb-8 text-center md:text-left">
+            © 2026 EduValidate Pty Ltd
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-white/10 my-8"></div>
+
+          {/* Disclaimer */}
+          <p className="text-xs text-gray-500 leading-relaxed text-center md:text-left">
+            EduValidate uses artificial intelligence to support assessment validation. EduValidate does not make compliance determinations — final validation judgements remain the responsibility of your RTO's credentialled trainers and assessors, in accordance with the Standards for RTOs 2025. View our <Link to="/ai-transparency" className="underline hover:text-white transition-colors">AI Transparency Statement</Link> and <Link to="/privacy-policy" className="underline hover:text-white transition-colors">Privacy Policy</Link>.
+          </p>
+        </div>
+      </footer>
+
+      {/* Request Demo Modal */}
+      {isDemoModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-[#021B30]/80 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setIsDemoModalOpen(false)}
+          />
+          
+          {/* Modal Container */}
+          <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transform transition-all duration-300 scale-100 animate-in fade-in-50 zoom-in-95 z-10 text-left">
+            <div className="bg-[#021B30] p-6 text-center relative">
+              <h3 className="text-2xl font-bold text-white mb-2">Request a Free Demo</h3>
+              <p className="text-blue-200 text-sm">Experience EduValidate's audit-grade validation</p>
+              <button 
+                type="button"
+                onClick={() => setIsDemoModalOpen(false)}
+                className="absolute top-4 right-4 text-white/75 hover:text-white transition-colors text-xl font-bold font-sans"
+              >
+                &times;
+              </button>
+            </div>
+            
+            <form onSubmit={handleDemoSubmit} className="p-8 space-y-6">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 block">Full Name</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={demoName}
+                  onChange={(e) => setDemoName(e.target.value)}
+                  placeholder="John Doe"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00cfa7] focus:bg-white text-gray-900 transition-all font-medium"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 block">Work Email</label>
+                <input 
+                  type="email" 
+                  required 
+                  value={demoEmail}
+                  onChange={(e) => setDemoEmail(e.target.value)}
+                  placeholder="john@company.com"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00cfa7] focus:bg-white text-gray-900 transition-all font-medium"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 block">RTO Name (Registered Training Organisation)</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={demoRto}
+                  onChange={(e) => setDemoRto(e.target.value)}
+                  placeholder="e.g. Eduvalidate RTO"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00cfa7] focus:bg-white text-gray-900 transition-all font-medium"
+                />
+              </div>
+              
+              <button
+                type="submit"
+                disabled={isSubmittingDemo}
+                className="w-full py-4 bg-gradient-to-r from-[#021B30] to-[#032E47] text-white rounded-xl font-black text-lg hover:shadow-xl hover:shadow-blue-400/30 transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {isSubmittingDemo ? "Submitting..." : "Submit Demo Request"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

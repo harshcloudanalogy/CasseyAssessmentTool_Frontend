@@ -18,6 +18,7 @@ import AdminDashboard from "@/components/Index";
 import OrgDashboardIndex from "@/components/OrgDashboardIndex";
 import AdminLayout from "@/components/AdminLayout";
 import OrgLogin from "@/components/OrgLogin";
+import LegalPage from "@/components/LegalPage"; // ← NEW
 
 function App() {
   useEffect(() => {
@@ -43,6 +44,12 @@ function App() {
           <Route path="/documents" element={<DocumentSelection />} />
           <Route path="/report-status" element={<DocumentSelection />} />
           <Route path="/report" element={<ValidationReport />} />
+
+          {/* Legal routes */}
+          <Route path="/privacy-policy" element={<LegalPage />} />
+          <Route path="/ai-transparency" element={<LegalPage />} />
+          <Route path="/terms-of-service" element={<LegalPage />} />
+          <Route path="/contact" element={<LegalPage />} />
 
           {/* Forgot & Reset Password routes */}
           <Route path="/forgot-password" element={<ForgotPassword />} />

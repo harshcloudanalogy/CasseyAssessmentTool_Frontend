@@ -16,6 +16,7 @@ import { CompetencyUnits } from "./SuperAdmin/CompetencyUnits";
 import { GenerateCompetency } from "./SuperAdmin/GenerateCompetency";
 import { ValidationReports } from "./SuperAdmin/ValidationReports";
 import { DocumentGame } from "./SuperAdmin/DocumentGame";
+import { AdminSettings } from "./SuperAdmin/AdminSettings";
 
 // Shared Types & API
 import { Organization, CompetencyReport } from "./SuperAdmin/types";
@@ -30,12 +31,12 @@ export default function Index() {
   // Global State
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loadingOrgs, setLoadingOrgs] = useState(false);
-  const [systemUnits, setSystemUnits] = useState<string[]>([]);
+  const [systemUnits, setSystemUnits] = useState<any[]>([]);
   const [loadingSystemUnits, setLoadingSystemUnits] = useState(false);
   
   // Competency Reports State (Centralized to share between Generate and View)
   const [competencyReports, setCompetencyReports] = useState<CompetencyReport[]>([]); // In a real app this would be fetched
-  const [activeManagerTab, setActiveManagerTab] = useState<"system" | "add" | "view_reports">("system");
+  const [activeManagerTab, setActiveManagerTab] = useState<"system" | "add" | "live_status">("system");
 
   // Load System Units
   const loadSystemUnits = async () => {
@@ -126,14 +127,14 @@ export default function Index() {
                         Add & Process
                     </button>
                     <button
-                        onClick={() => setActiveManagerTab('view_reports')}
+                        onClick={() => setActiveManagerTab('live_status')}
                         className={`pb-2 px-1 text-sm font-medium transition-colors border-b-2 ${
-                            activeManagerTab === 'view_reports'
+                            activeManagerTab === 'live_status'
                                 ? "border-blue-600 text-blue-600"
                                 : "border-transparent text-muted-foreground hover:text-gray-700"
                         }`}
                     >
-                        View Reports
+                        Live Status
                         {competencyReports.length > 0 && (
                             <span className="ml-2 bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-full text-xs">
                                 {competencyReports.length}
@@ -158,7 +159,7 @@ export default function Index() {
                     />
                 )}
 
-                {activeManagerTab === 'view_reports' && (
+                {activeManagerTab === 'live_status' && (
                     <ValidationReports 
                         competencyReports={competencyReports}
                         setCompetencyReports={setCompetencyReports}
@@ -174,6 +175,10 @@ export default function Index() {
                 loadingOrgs={loadingOrgs}
                 refreshOrgs={fetchOrganizations}
             />
+        )}
+
+        {currentView === "settings" && (
+            <AdminSettings />
         )}
     </div>
   );

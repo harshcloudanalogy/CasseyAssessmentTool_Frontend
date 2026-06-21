@@ -208,7 +208,7 @@ export function OrganizationManagement({ organizations, setOrganizations, loadin
 
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-12">
 
       <Tabs value={orgTab} onValueChange={(v) => setOrgTab(v as any)} className="w-full">
          <TabsList className="bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm p-1.5 rounded-2xl flex gap-1 mb-10 w-fit mx-auto shadow-sm border">
@@ -463,7 +463,7 @@ export function OrganizationManagement({ organizations, setOrganizations, loadin
           </TabsContent>
 
           <TabsContent value="requests" className="mt-0">
-              <div className="space-y-4">
+              <div className="space-y-4 pb-20">
                  {pendingOrgs.map((req) => (
                    <Card key={req.id} className="overflow-hidden border border-slate-200 shadow-sm bg-white dark:bg-slate-900 group transition-all hover:shadow-md rounded-2xl">
                      <div className="flex flex-col md:flex-row min-h-[160px]">

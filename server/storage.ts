@@ -1,6 +1,12 @@
 import { type User, type InsertUser, type AssessmentUpload, type InsertAssessmentUpload, type ValidationReport, type InsertValidationReport } from "@shared/schema";
 import { randomUUID } from "crypto";
 
+// Mock competency unit type since it's not in schema
+export interface CompetencyUnit {
+  code: string;
+  status: string;
+}
+
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
@@ -9,17 +15,24 @@ export interface IStorage {
   getAssessmentUploads(userId: string): Promise<AssessmentUpload[]>;
   createValidationReport(report: InsertValidationReport): Promise<ValidationReport>;
   getValidationReport(uploadId: string): Promise<ValidationReport | undefined>;
+  
+  // Competency Unit methods
+  getCompetencyUnits(): Promise<string[]>;
+  addCompetencyUnit(unitCode: string): Promise<void>;
+  deleteCompetencyUnit(unitCode: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<string, User>;
   private assessmentUploads: Map<string, AssessmentUpload>;
   private validationReports: Map<string, ValidationReport>;
+  private competencyUnits: Set<string>;
 
   constructor() {
     this.users = new Map();
     this.assessmentUploads = new Map();
     this.validationReports = new Map();
+    this.competencyUnits = new Set(["BSBTEC301", "BSBTEC302", "BSBTEC404"]);
     
     // Add demo user
     const demoUser: User = {
@@ -85,6 +98,18 @@ export class MemStorage implements IStorage {
     return Array.from(this.validationReports.values()).find(
       (report) => report.uploadId === uploadId
     );
+  }
+
+  async getCompetencyUnits(): Promise<string[]> {
+    return Array.from(this.competencyUnits);
+  }
+
+  async addCompetencyUnit(unitCode: string): Promise<void> {
+    this.competencyUnits.add(unitCode);
+  }
+
+  async deleteCompetencyUnit(unitCode: string): Promise<boolean> {
+    return this.competencyUnits.delete(unitCode);
   }
 }
 

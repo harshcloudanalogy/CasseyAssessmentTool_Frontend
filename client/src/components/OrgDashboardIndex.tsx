@@ -45,12 +45,12 @@ export default function OrgDashboardIndex() {
   }, [currentView, navigate]);
 
   // Global State
-  const [systemUnits, setSystemUnits] = useState<string[]>([]);
+  const [systemUnits, setSystemUnits] = useState<any[]>([]);
   const [loadingSystemUnits, setLoadingSystemUnits] = useState(false);
   
   // Competency Reports State
   const [competencyReports, setCompetencyReports] = useState<CompetencyReport[]>([]);
-  const [activeManagerTab, setActiveManagerTab] = useState<"system" | "add" | "view_reports">("system");
+  const [activeManagerTab, setActiveManagerTab] = useState<"system" | "add" | "live_status">("system");
 
   // Load System Units
   const loadSystemUnits = async () => {
@@ -125,14 +125,14 @@ export default function OrgDashboardIndex() {
                         Add & Process
                     </button>
                     <button
-                        onClick={() => setActiveManagerTab('view_reports')}
+                        onClick={() => setActiveManagerTab('live_status')}
                         className={`pb-2 px-1 text-sm font-medium transition-colors border-b-2 ${
-                            activeManagerTab === 'view_reports'
+                            activeManagerTab === 'live_status'
                                 ? "border-blue-600 text-blue-600"
                                 : "border-transparent text-muted-foreground hover:text-gray-700"
                         }`}
                     >
-                        View Reports
+                        Live Status
                         {competencyReports.length > 0 && (
                             <span className="ml-2 bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-full text-xs">
                                 {competencyReports.length}
@@ -157,7 +157,7 @@ export default function OrgDashboardIndex() {
                     />
                 )}
 
-                {activeManagerTab === 'view_reports' && (
+                {activeManagerTab === 'live_status' && (
                     <ValidationReports 
                         competencyReports={competencyReports}
                         setCompetencyReports={setCompetencyReports}

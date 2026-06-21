@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { createCheckoutSession, fetchSubscriptionDetails } from "./api";
+import { createCheckoutSession, fetchSubscriptionDetails, fetchOrgDashboard } from "./api";
+import { parseJwt } from "@/lib/auth";
 
 interface Plan {
   id: number;
@@ -17,25 +18,54 @@ export function SubscriptionPurchase() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingId, setLoadingId] = useState<number | null>(null);
+  const [currentPlanId, setCurrentPlanId] = useState<number | null>(null);
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
   React.useEffect(() => {
-    const loadPlans = async () => {
+    const loadData = async () => {
       try {
+        const token = sessionStorage.getItem("access_token");
+        if (token) {
+          const decoded = parseJwt(token);
+          const orgId = decoded?.organization_id || decoded?.org_id || decoded?.id;
+          if (orgId) {
+            const orgRes = await fetchOrgDashboard(orgId);
+            if (orgRes.success && orgRes.organization) {
+              setCurrentPlanId(orgRes.organization.subscription_id);
+              setIsSubscribed(orgRes.organization.is_subscribed);
+            }
+          }
+        }
+
         const response = await fetchSubscriptionDetails();
         if (response.success && response.data) {
-          const mappedPlans: Plan[] = response.data.map((item: any) => ({
-            id: item.id,
-            name: item.name,
-            price: `$${item.price}`,
-            period: item.duration_days === 365 ? "/year" : `/ ${item.duration_days} days`,
-            features: [
-              `${item.credits} Credits`,
-              `${item.duration_days} Days`,
-              `Max ${item.max_competencies} Units`,
-              item.features || `${item.name} plan`
-            ].filter(Boolean),
-            recommended: item.id === 3 // Keeping Premium as recommended if it exists
-          }));
+          const mappedPlans: Plan[] = response.data.map((item: any) => {
+            let price = `$${item.price}`;
+            let credits = `${item.credits} Credits`;
+            if (item.name === "Lite") {
+              price = "$8,000.00";
+              credits = "15 Credits";
+            } else if (item.name === "Pro") {
+              price = "$15,000.00";
+              credits = "40 Credits";
+            } else if (item.name === "Premium") {
+              price = "$22,000.00";
+              credits = "75 Credits";
+            }
+            return {
+              id: item.id,
+              name: item.name,
+              price: price,
+              period: item.duration_days === 365 ? "/year" : `/ ${item.duration_days} days`,
+              features: [
+                credits,
+                `${item.duration_days} Days`,
+                `Max ${item.max_competencies} Units`,
+                item.features || `${item.name} plan`
+              ].filter(Boolean),
+              recommended: item.name === "Pro" || item.id === 2
+            };
+          });
           
           // Sort plans by price (Free first, then others)
           const sorted = mappedPlans.sort((a, b) => {
@@ -47,12 +77,12 @@ export function SubscriptionPurchase() {
           setPlans(sorted);
         }
       } catch (error) {
-        console.error("Failed to load plans:", error);
+        console.error("Failed to load subscription data:", error);
       } finally {
         setLoading(false);
       }
     };
-    loadPlans();
+    loadData();
   }, []);
 
   const handleSubscribe = async (planId: number) => {
@@ -90,7 +120,7 @@ export function SubscriptionPurchase() {
   const freePlan = plans.find((p: Plan) => p.id === 0);
 
   return (
-    <div className="min-h-full bg-[#f8fafc] text-slate-900 p-8 pt-20 overflow-y-auto">
+    <div className="bg-[#f8fafc] text-slate-900 p-8 pt-20 pb-40">
       <div className="max-w-6xl mx-auto text-center space-y-4 mb-12">
         <h1 className="text-4xl font-bold tracking-tight text-slate-900">Upgrade Your Plan</h1>
         <p className="text-slate-500 text-lg">
@@ -105,6 +135,7 @@ export function SubscriptionPurchase() {
             plan={plan} 
             onSubscribe={() => handleSubscribe(plan.id)}
             isLoading={loadingId === plan.id}
+            isCurrentPlan={currentPlanId === plan.id && isSubscribed}
           />
         ))}
       </div>
@@ -116,6 +147,7 @@ export function SubscriptionPurchase() {
               plan={freePlan} 
               onSubscribe={() => handleSubscribe(freePlan.id)}
               isLoading={loadingId === freePlan.id}
+              isCurrentPlan={currentPlanId === freePlan.id || !isSubscribed}
             />
           </div>
         </div>
@@ -127,17 +159,24 @@ export function SubscriptionPurchase() {
 function PlanCard({ 
   plan, 
   onSubscribe, 
-  isLoading 
+  isLoading,
+  isCurrentPlan
 }: { 
   plan: Plan, 
   onSubscribe: () => void,
-  isLoading: boolean
+  isLoading: boolean,
+  isCurrentPlan?: boolean
 }) {
   const isFree = plan.id === 0;
+  const isActive = isCurrentPlan;
 
   return (
-    <Card className={`bg-white border-slate-200 text-slate-900 relative transition-all duration-300 ${!isFree ? 'hover:scale-105 hover:shadow-2xl hover:shadow-blue-200/50' : ''} flex flex-col h-full ${plan.recommended ? 'ring-2 ring-blue-600 shadow-xl shadow-blue-200/50' : 'shadow-sm'}`}>
-      {plan.recommended && (
+    <Card className={`bg-white border-slate-200 text-slate-900 relative transition-all duration-300 ${isActive ? 'bg-blue-50/40 ring-2 ring-blue-600 shadow-xl shadow-blue-200/50 border-blue-600' : !isFree ? 'hover:scale-105 hover:shadow-2xl hover:shadow-blue-200/50' : ''} flex flex-col h-full ${plan.recommended && !isActive ? 'ring-2 ring-blue-600 shadow-xl shadow-blue-200/50' : 'shadow-sm'}`}>
+      {isActive ? (
+        <div className="absolute top-0 left-0 right-0 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest py-1.5 text-center rounded-t-lg">
+          Current Plan
+        </div>
+      ) : plan.recommended && (
         <div className="absolute top-0 left-0 right-0 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest py-1.5 text-center rounded-t-lg">
           Recommended
         </div>
@@ -163,17 +202,21 @@ function PlanCard({
 
         <Button 
           onClick={onSubscribe}
-          disabled={isFree || isLoading}
+          disabled={(isFree || isLoading || isActive)}
           className={`w-full py-6 mt-8 font-bold text-md transition-all ${
-            isFree 
-              ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
-              : plan.recommended 
-                ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20' 
-                : 'bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200 shadow-sm'
+            isActive
+              ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+              : isFree 
+                ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                : plan.recommended 
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20' 
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200 shadow-sm'
           }`}
         >
           {isLoading ? (
             <Loader2 className="w-5 h-5 animate-spin" />
+          ) : isActive ? (
+            "Subscribed"
           ) : isFree ? (
             "Current Plan"
           ) : (

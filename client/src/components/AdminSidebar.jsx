@@ -64,6 +64,12 @@ export default function AdminSidebar() {
           active={currentView === "documents"} 
           onClick={() => handleNav("documents")} 
         />
+        <NavItem 
+          icon={Settings} 
+          label="System Settings" 
+          active={currentView === "settings"} 
+          onClick={() => handleNav("settings")} 
+        />
       </nav>
 
       {/* Footer / Account */}
